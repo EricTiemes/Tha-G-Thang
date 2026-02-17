@@ -1,0 +1,20 @@
+{
+    "id": "structure_quick",
+    "name": "Structure Analysis - Quick",
+    "description": "Fast addon structure analysis with smart defaults",
+    "version": "1.0",
+    "module": "structure_analyzer",
+    "mode": "quick",
+    "options": {
+        "analyze_entry_points": true,
+        "detect_frameworks": true,
+        "count_modules": true,
+        "classify_structure": true,
+        "max_depth": 3
+    },
+    "output": {
+        "format": "summary",
+        "save_report": true,
+        "show_notification": true
+    }
+}

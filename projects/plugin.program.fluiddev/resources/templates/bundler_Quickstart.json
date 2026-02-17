@@ -1,0 +1,18 @@
+{
+        "id": "bundle_quickstart",
+        "name": "Quick Code Bundle",
+        "description": "Fast bundling of extracted patterns",
+        "version": "1.0",
+        "module": "code_bundler",
+        "target_files": ["*.py"],
+        "filters": {
+            "bundle_type": "simple",
+            "include_metadata": True
+        },
+        "delivery_format": "code_bundle",
+        "options": {
+            "auto_export_acode": True,
+            "include_index": True,
+            "compress": False
+        }
+    }

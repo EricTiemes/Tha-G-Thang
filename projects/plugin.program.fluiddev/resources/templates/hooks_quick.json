@@ -1,0 +1,20 @@
+{
+    "id": "hooks_quick",
+    "name": "Hook Tracing - Quick",
+    "description": "Fast Kodi hook detection and tracing",
+    "version": "1.0",
+    "module": "hook_tracer",
+    "mode": "quick",
+    "options": {
+        "trace_plugin_hooks": true,
+        "trace_service_hooks": true,
+        "trace_monitor_hooks": true,
+        "trace_player_hooks": true,
+        "max_depth": 2
+    },
+    "output": {
+        "format": "summary",
+        "save_report": true,
+        "show_notification": true
+    }
+}

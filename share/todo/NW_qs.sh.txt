@@ -1,0 +1,51 @@
+/scripts.sh
+
+For coding addons projects paths, 
+Use:
+/scripts/lib/project_selector.sh
+
+Other scripts available:
+├── bridge.sh
+├── bump_version.sh
+├── bundle.sh
+├── debug_bundle.sh
+├── git_sync.sh
+├── lib
+│   └── project_selector.sh
+├── lint.sh
+├── release_info.sh
+├── ruff_projects.sh
+├── server.sh
+└── tree.sh
+
+**No duplicates with existing scripts** - qs.sh is distinct: it's a *session initializer*, not a builder/linter/syncer.
+
+**What qs.sh should do (your case):**
+Assemble a ready-to-paste AI context file from existing sources:
+
+- `system/config/ai_protocol.yaml` - base rules
+- `system/modes/[active_mode].yaml` - current mode
+- `system/roles/` - active role
+- `share/handoffs/` - latest handoff
+- Filtered tree (projects + scripts only, no logs/zips)
+
+**Two approaches:**
+
+**A. Single dynamic quickstart** - qs.sh assembles everything fresh each run into one file. Flexible, always current.
+
+**B. Mode-specific templates** - `qs_coding.sh`, `qs_brainstorm.sh` etc. Pre-structured per context. Less flexible, faster to grab.
+
+**My advice:** A + light templating. One `qs.sh` with optional mode argument:
+```
+qs.sh           # default/last mode
+qs.sh coding    # pulls coding mode config
+```
+Output: `share/quickstart_[mode]_[ts].txt`
+...
+
+Me:
+Since we only have 3 modes now  
+I prefer option B : 
+qs.sh creates multi qs_ai_init files in /share ,  to start so chats 
+global prefs + mode specific paths & instr  (if possible extractions from last 2 files in  /share/Handoff  /docs by specific keywords, related to the specific mode ?  
+Suggest a better or  alternative approach ) 

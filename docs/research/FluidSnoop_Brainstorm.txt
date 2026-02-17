@@ -1,0 +1,309 @@
+Based on the cases below, can we build a new research, snoop, log & copy - Addon, that works in live kodi,
+... 
+
+This is exactly what live debugging/code-snoop addons do.**
+
+## **What you're building:**
+
+A **live runtime inspector** that:
+1. Hooks into running addons
+2. Captures their behavior (not just static code)
+3. Extracts working implementations
+4. Copies patterns to your addon
+
+## **Technical approach:**
+
+### **Core mechanism:**
+```python
+# Monkey-patch Kodi's module loader
+import sys
+original_import = __import__
+
+def spy_import(name, *args, **kwargs):
+    module = original_import(name, *args, **kwargs)
+    if 'plugin.video' in name or 'super.favourites' in name:
+        # Wrap module's functions with loggers
+        hook_module(module)
+    return module
+
+__builtins__.__import__ = spy_import
+```
+
+### **What to capture:**
+
+**From Super Favourites (download flow):**
+- Hook `xbmcplugin.addDirectoryItem` calls
+- Log: URL patterns, params, item structure
+- Capture when user clicks item → what happens
+
+**From Cumination (menu + favorites):**
+- Intercept menu building logic
+- Log favorite storage calls (DB writes)
+- Extract menu configuration structure
+
+**From your old addon (favorites DB):**
+- Dump DB schema + functions
+- Compare with new version
+- Inject missing hooks
+
+## **Existing tools that do this:**
+
+**`plugin.program.developer.toolkit`** - Monitors addon calls
+**Kodi's debug logging** - Already captures some of this
+**Your approach** - More targeted, extracts reusable code
+
+## **Implementation:**
+
+### **New addon: `plugin.program.fluidspy`**
+
+**Features:**
+1. **Live hook tracer** (already have `module_hook_tracer`)
+2. **Runtime function capture**
+3. **DB schema extractor**
+4. **Code diff/merge tool**
+
+**Workflow:**
+```
+1. Enable FluidSpy
+2. Use target addon normally
+3. Fluidsnoop logs all calls in background
+4. Export captured patterns
+5. Generate code snippets for your addon
+```
+
+### **Specific captures:**
+
+**Super Favourites download:**
+```python
+# Capture sequence:
+user_click → plugin://super.favourites/?mode=download&url=X
+→ requests.get(url)
+→ save to filesystem
+→ xbmcvfs.File operations
+
+# Extract pattern, adapt to your addon
+```
+
+**Cumination favorites:**
+```python
+# Monitor:
+- Favorite add/remove calls
+- DB operations (INSERT/DELETE)
+- Menu XML/JSON structure
+
+# Copy working hook implementation
+```
+
+**Your old favorites DB:**
+```python
+# Static analysis of old code + live trace of new version
+# Identify: where hook fails in new version
+# Inject: working logic from old version
+```
+
+## **Better than FluidDev static analysis because:**
+
+✅ Captures **runtime behavior** (not just static code)
+✅ Sees **actual data flow** (URLs, params, DB queries)
+✅ Works with **obfuscated code** (observes inputs/outputs)
+✅ Finds **hidden dependencies** (network calls, file access)
+
+## **Answer your question:**
+
+**Yes, this approach works better** than static code analysis for:
+- Understanding complex flows
+- Extracting working patterns
+- Debugging favorites hook issue
+
+Want implementation details for Fluidsnoop addon?
+
+Not focussed on my cases, but being able to solve issues like mine.
+ - Include research  of popups, clean messages & progress msgs too.
+
+ modular architecture works perfectly for FluidSnoop.**
+
+## **Architecture:**
+
+```
+FluidSnoop/
+├── addon.py (router - blind to modules)
+├── resources/lib/
+│   ├── core/
+│   │   ├── config.py
+│   │   └── router.py
+│   └── modules/
+│       ├── runtime_hook.py      # Monkey-patch imports/functions
+│       ├── call_logger.py       # Log function calls + args
+│       ├── db_spy.py           # Monitor SQLite operations
+│       ├── ui_interceptor.py   # Capture dialogs/notifications
+│       ├── network_monitor.py  # Track HTTP requests
+│       └── pattern_extractor.py # Generate code from logs
+```
+
+**Router stays dumb:**
+```python
+# addon.py
+mode = params.get('mode')
+if mode == 'hook_addon':
+    modules.runtime_hook.start()
+elif mode == 'view_logs':
+    modules.call_logger.display()
+# etc...
+```
+
+## **Module: `ui_interceptor.py`**
+
+**Captures all Kodi UI calls:**
+
+```python
+import xbmcgui
+
+class UIInterceptor:
+    def __init__(self, config):
+        self.config = config
+        self.original_dialog = xbmcgui.Dialog
+        
+    def start_monitoring(self):
+        # Wrap xbmcgui.Dialog
+        xbmcgui.Dialog = self._wrap_dialog(self.original_dialog)
+        
+    def _wrap_dialog(self, original_cls):
+        interceptor = self
+        
+        class WrappedDialog(original_cls):
+            def ok(self, heading, message):
+                interceptor._log_ui_call('ok', {
+                    'heading': heading,
+                    'message': message
+                })
+                return super().ok(heading, message)
+                
+            def notification(self, heading, message, icon=None, time=5000):
+                interceptor._log_ui_call('notification', {
+                    'heading': heading,
+                    'message': message,
+                    'icon': icon,
+                    'time': time
+                })
+                return super().notification(heading, message, icon, time)
+                
+            def progress(self):
+                instance = super().progress()
+                return interceptor._wrap_progress(instance)
+                
+        return WrappedDialog
+        
+    def _wrap_progress(self, progress_instance):
+        """Wrap DialogProgress to log update() calls"""
+        # Similar wrapping for update(), close(), etc.
+        pass
+        
+    def _log_ui_call(self, method, params):
+        self.config.log({
+            'type': 'ui_call',
+            'method': method,
+            'params': params,
+            'addon': self._get_calling_addon()
+        })
+```
+
+## **Module: `call_logger.py`**
+
+**Logs everything to structured format:**
+
+```python
+{
+    'timestamp': '2026-02-10 14:32:01',
+    'addon_id': 'plugin.video.cumination',
+    'call_type': 'ui_call',
+    'method': 'Dialog.ok',
+    'params': {'heading': 'Error', 'message': 'Stream not found'},
+    'stack_trace': ['default.py:45', 'router.py:12']
+}
+```
+
+**Generates reports:**
+- "All UI messages from addon X"
+- "Network calls for favorites feature"
+- "DB operations timeline"
+
+## **Module: `pattern_extractor.py`**
+
+**From logs → reusable code:**
+
+```python
+# Analyze logs for "add to favorites" action
+# Extract pattern:
+{
+    'action': 'add_favorite',
+    'db_operations': ['INSERT INTO favorites...'],
+    'ui_feedback': ['Dialog.notification("Added")'],
+    'code_template': '''
+def add_favorite(item):
+    db.execute("INSERT INTO favorites VALUES (?, ?)", (item.name, item.url))
+    xbmcgui.Dialog().notification("Added", item.name)
+'''
+}
+```
+
+## **Use cases FluidSnoop solves:**
+
+✅ **Your case:** Extract Super Favourites download flow
+✅ **Generic:** How does addon X handle authentication?
+✅ **Debugging:** Why do progress dialogs freeze?
+✅ **Learning:** What's the call sequence for video playback?
+✅ **UI patterns:** Clean notification messages used by top addons
+
+## **Advantages over static analysis:**
+
+- Sees actual runtime behavior
+- Captures dynamic code paths
+- Works with encrypted/obfuscated addons
+- Shows real-world data (URLs, messages, timing)
+
+**Ready to build this?** Modules can be added incrementally - start with `ui_interceptor` + `call_logger`.. 
+
+
+- I once got a code snippet from Ai, to insert in an addons file, for better logs  is that an extra hop to add, or not the right hook? 
+-  I find delivery in multiple formats, that serve AI Handoff, or json, or compactnddd vs detailed important too.
+
+**1. Log snippet in addon file:**
+Yes, that's a valid hook point. Adding logging to target addon's code = direct instrumentation. FluidSnoop can offer BOTH:
+- **External hooks** (monkey-patching from outside - no file edits)
+- **Instrumentation snippets** (inject into addon file - more precise)
+
+Module: `code_injector.py` - generates logging code to insert at specific lines.
+
+**2. Multiple output formats:**
+Critical for usefulness. Add to each module:
+
+```python
+def export_results(self, format='json'):
+    if format == 'json':
+        return json.dumps(self.data, indent=2)
+    elif format == 'ai_handoff':
+        return self._format_for_llm()  # Markdown with context
+    elif format == 'compact':
+        return self._one_line_summary()
+    elif format == 'detailed':
+        return self._full_report_with_code()
+```
+
+**AI handoff format example:**
+```markdown
+## Captured Pattern: Add to Favorites
+
+**Source:** plugin.video.cumination
+**Action:** User clicked "Add Favorite"
+
+**Sequence:**
+1. DB: INSERT INTO favorites (name, url) VALUES (?, ?)
+2. UI: Dialog.notification("Success", "Added to favorites")
+
+**Reusable code:**
+[code block here]
+```
+
+---
+
+**Starting FluidSnoop build now?** Which module first: `ui_interceptor` or `runtime_hook`?

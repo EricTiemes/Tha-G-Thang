@@ -1,0 +1,20 @@
+{
+    "id": "lint_quick",
+    "name": "Linting - Quick",
+    "description": "Fast code linting with common checks",
+    "version": "1.0",
+    "module": "linter",
+    "mode": "quick",
+    "options": {
+        "check_syntax": true,
+        "check_style": true,
+        "check_imports": true,
+        "max_line_length": 120,
+        "ignore_warnings": false
+    },
+    "output": {
+        "format": "summary",
+        "save_report": true,
+        "show_notification": true
+    }
+}

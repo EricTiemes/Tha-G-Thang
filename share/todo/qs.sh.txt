@@ -1,0 +1,15 @@
+#!/bin/bash
+# === QS.SH | v2026.02.03 ===
+[ -z "$REPO_CONFIG" ] && source "$(dirname "$0")/dev_bridge.sh"
+
+TS=$(date +%Y%m%d_%H%M%S)
+BUNDLE_DIR="$REPO_SYSTEM/bundles"
+mkdir -p "$BUNDLE_DIR"
+
+# Lock: Sync constants to a bundle for AI review
+if [ -f "$REPO_CONFIG/repo_constants.txt" ]; then
+    cat "$REPO_CONFIG/repo_constants.txt" > "$BUNDLE_DIR/qs_$TS.txt"
+    echo "✓ AI QuickStart: $BUNDLE_DIR/qs_$TS.txt"
+else
+    echo "✗ ERROR: Constants missing at $REPO_CONFIG"
+fi

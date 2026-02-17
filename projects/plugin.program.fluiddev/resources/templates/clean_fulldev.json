@@ -1,0 +1,35 @@
+{
+    "id": "clean_fulldev",
+    "name": "Code Cleaning - FullDev",
+    "description": "Comprehensive code cleanup with advanced options",
+    "version": "1.0",
+    "module": "code_cleaner",
+    "mode": "fulldev",
+    "options": {
+        "remove_comments": false,
+        "remove_docstrings": false,
+        "remove_unused_imports": true,
+        "remove_unused_variables": true,
+        "normalize_whitespace": true,
+        "fix_line_endings": true,
+        "format_with_black": true,
+        "sort_imports": true,
+        "remove_trailing_whitespace": true,
+        "fix_indentation": true,
+        "create_backup": true,
+        "dry_run": false
+    },
+    "output": {
+        "format": "detailed",
+        "save_report": true,
+        "export_diff": true,
+        "show_notification": true,
+        "include_statistics": true
+    },
+    "advanced": {
+        "parallel_processing": false,
+        "cache_results": true,
+        "verbose_logging": true,
+        "custom_rules": []
+    }
+}

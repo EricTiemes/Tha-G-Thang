@@ -1,0 +1,26 @@
+# Tha-G-Thang Environment
+export THAG="/storage/emulated/0/Tha-G-Thang"
+export PATH="$HOME/.local/bin:$PATH"
+
+# Navigation aliases
+alias thag="cd $THAG"
+alias projects="cd $THAG/projects"
+alias scripts="cd $THAG/scripts"
+alias logs="cd $THAG/logs"
+alias ll="ls -lah"
+alias ..="cd .."
+
+# Script aliases – short, interactive
+alias tr="tree.sh"           # tree
+alias li="lint.sh"           # lint (ruff or pylint)
+alias bmp="bump_version.sh"  # bump version
+alias zip="bundle.sh"        # create zip
+alias deb="debug_bundle.sh"  # debug bundle with dev timestamp
+alias relinfo="release_info.sh"  # generate release info + handoff
+alias togit="git_sync.sh"    # commit & push public changes
+
+# Auto-source bridge (contains more environment vars)
+[ -f "$THAG/scripts/bridge.sh" ] && source "$THAG/scripts/bridge.sh"
+
+# Start in project root
+cd "$THAG" 2>/dev/null || cd ~

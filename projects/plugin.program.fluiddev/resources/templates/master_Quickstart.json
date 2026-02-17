@@ -1,0 +1,18 @@
+{
+        "id": "master_quickstart",
+        "name": "Quick Dev Audit",
+        "description": "Run all quick templates in sequence",
+        "version": "1.0",
+        "module": "master",
+        "sequence": [
+            "structure_quickstart",
+            "deps_quickstart",
+            "pattern_quickstart",
+            "hooks_quickstart"
+        ],
+        "delivery_format": "combined_report",
+        "options": {
+            "parallel": False,
+            "stop_on_error": False
+        }
+    }

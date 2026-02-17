@@ -1,0 +1,30 @@
+{
+    "id": "youtube_search_fulldev",
+    "name": "YouTube Search - FullDev",
+    "description": "Advanced playlist search with filtering and batch operations",
+    "version": "1.0",
+    "module": "youtube_search",
+    "mode": "fulldev",
+    "options": {
+        "max_results": 20,
+        "search_type": "playlist",
+        "filter_by_duration": false,
+        "filter_by_channel": false,
+        "min_duration": null,
+        "max_duration": null,
+        "preferred_channels": [],
+        "auto_save": true,
+        "include_metadata": true
+    },
+    "output": {
+        "format": "json",
+        "save_location": "~/downloads/youtube",
+        "export_csv": false,
+        "show_notification": true,
+        "include_thumbnails": false
+    },
+    "advanced": {
+        "cache_results": true,
+        "verbose_logging": true
+    }
+}

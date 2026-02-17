@@ -1,0 +1,34 @@
+1. Brainstorm on 
+Combining apps, Ai, scripts, for easier  more audio, homeflow. 
+
+Mode Brainstorm:
+generate, explore, no quick conclusions.
+- I prefer illiterating over quick answers. 
+When you need clarity or context, ask me questions. 
+
+2. We make an inventory-list: of current local Assets. 
+Newby with audio - & automated flows. 
+-list pkgs termux
+(oa ollama version **,  vCode, json, python,  PIP, .sh & .py scripts. 
+Android phone (Huawei) 
+Coding: Gemini, kimi, Claude
+
+3 you do Research. 
+- Conform assets & preferences & current constraints. 
+- Balancing user-friendly vs performance. 
+
+4. You 
+- Report possibilities, choices, found treasures.
+- Show for my case : best practices & alternatives (for comparison).
+
+5.We discuss, 
+I ask questions, 
+You advice. 
+We refine & lockdown. 
+
+Discussion mode:
+advise, weigh, decide, say no.
+- I prefer 'your honest opinion' more then 'you serving  me' with fast conclusions or un-requesred deliveries. 
+
+- Later :
+TVBox Firefox dashboard with Sandro as interface  (20+ expression images in /assets), voice of Josh Johnson (10 sec snippet 'Josh.mp3,' local on  phone) 

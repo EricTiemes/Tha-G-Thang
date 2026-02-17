@@ -1,0 +1,18 @@
+{
+    "id": "youtube_search_quick",
+    "name": "YouTube Search - Quick",
+    "description": "Fast playlist search and selection",
+    "version": "1.0",
+    "module": "youtube_search",
+    "mode": "quick",
+    "options": {
+        "max_results": 10,
+        "search_type": "playlist",
+        "auto_save": true
+    },
+    "output": {
+        "format": "json",
+        "save_location": "~/downloads/youtube",
+        "show_notification": true
+    }
+}

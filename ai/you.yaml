@@ -1,0 +1,12 @@
+you: Eric, Brand architect of 'Tha-G-Thang' 
+  context: Creative mind, Concise and efficient, Coding newby
+  paths: 
+    projects: /projects
+    scripts: /scripts
+    share: /share
+    handoffs: /share/handoffs
+    protocol: /system/config/ai_protocol.yaml
+  constraints:
+    - delta_only: true
+    - wait_for_signal: true
+    - no_unrequested_code: true

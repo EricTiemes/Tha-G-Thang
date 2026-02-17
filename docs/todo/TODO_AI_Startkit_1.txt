@@ -1,0 +1,57 @@
+# BLUEPRINT: AI Workflow Starter Kit
+
+## **CHOSEN STARTER KIT**
+**Dify** - AI orchestration platform with visual workflow builder
+
+## **WHY DIFY**
+- Multi-model support (Claude, Gemini, Groq, Kimi)
+- Visual workflow builder (no pure coding needed)
+- Context/memory management built-in
+- Free tier sufficient to start
+- Python API for Termux automation
+
+## **LEARNING PATH**
+
+### **Phase 1: Foundations (Week 1-2)**
+- Obsidian basics (folders, templates, linking)
+- Recall AI setup (capture → Obsidian)
+- **Action:** Use daily, build habit
+
+### **Phase 2: Add AI (Week 3-4)**
+- Dify account + API keys (free tiers)
+- Build first workflow: "Expand idea outline"
+- Learn Dify basics via YouTube/docs
+- **Action:** One working workflow, manual testing
+
+### **Phase 3: Automate (Week 5-6)**
+- Python script: Obsidian ↔ Dify connection
+- Automate one use case end-to-end
+- **Action:** Hands-off workflow running
+
+### **Phase 4: Expand (Ongoing)**
+- Add workflows as needed
+- Consider budget tools if free tiers insufficient
+
+## **KEY PREFERENCES**
+
+### **Agent Behavior:**
+- Coding tasks: step-by-step, ultra-short, no fluff
+- Brainstorm: exploratory, less rigid
+- Use JSON output for structured data
+- **Implementation:** Different system prompts per agent/workflow
+
+### **Workflow Types to Build:**
+1. Creative pipeline: idea → vision → research → plan
+2. Unified model behavior across free tiers
+3. Pattern detection → skill suggestion (future)
+
+## **OPTIONAL TOOLS**
+- **Apps:** Taim, Zapier/Make (for monitoring/suggestions)
+- **Obsidian plugins:** Smart Connections, Text Generator, Canvas
+- **Alternative kits:** Flowise, Langflow, AutoGen Studio, CrewAI
+
+## **NEXT ACTIONS**
+1. Install Obsidian, create folder structure
+2. Set up Recall AI
+3. Week of daily use before adding AI
+4. Sign up Dify when ready for Phase 2

@@ -1,0 +1,308 @@
+# FluidSnoop 2.0
+
+**Live Runtime Inspector for Kodi Addons**
+
+FluidSnoop monitors live addon behavior to extract reusable code patterns, debug issues, and understand implementation details. Version 2.0 features a complete architectural overhaul with wizard-based targeting, SQLite persistence, and modular design.
+
+## Features
+
+### 🎯 Targeted Research Wizard
+- **Purpose-driven monitoring**: Choose from 9 research types (favorites extraction, download flow, hook debug, etc.)
+- **Smart module selection**: Auto-selects required modules based on research goal
+- **Multi-addon support**: Compare addons or batch research multiple targets
+- **Advisor system**: Contextual suggestions during configuration
+
+### 📊 Multi-Format Exports
+- **JSON**: Raw event data for programmatic analysis
+- **AI Handoff**: Markdown reports with context for LLM processing
+- **Compact**: One-line summaries for quick review
+- **Detailed**: Full event details with extracted code patterns
+
+### 💾 SQLite Persistence
+- **Session history**: All research sessions saved with metadata
+- **Event buffering**: Real-time event capture with configurable buffering
+- **Comparison tools**: Compare sessions to identify behavioral differences
+- **Auto-cleanup**: Configurable retention policies
+
+### 🔧 Modular Architecture
+- **UI Interceptor**: Captures dialogs, notifications, progress
+- **DB Spy**: Monitors SQLite operations and schema
+- **Network Monitor**: Tracks HTTP requests (urllib + requests)
+- **Runtime Hook**: Logs function calls with arguments
+- **Filesystem Monitor**: Tracks file operations
+- **Code Injector**: Generates instrumentation snippets
+
+## Installation
+
+1. Copy `plugin.program.fluidsnoop` folder to your Kodi addons directory
+2. Restart Kodi or reload addons
+3. Configure settings (optional)
+4. Launch from Programs menu
+
+## Usage
+
+### Starting Research
+
+1. **Launch FluidSnoop** from Programs menu
+2. **Select "Start Research Wizard"**
+3. **Choose research type**:
+   - Copy Favorites System
+   - Debug Download Flow
+   - Fix Broken Hook
+   - Extract Menu Structure
+   - Audit UI Messages
+   - Study Network Patterns
+   - Reverse DB Schema
+   - Compare Addons
+   - Custom Research
+
+4. **Select target addon** from installed addons
+5. **Configure modules** (auto-selected based on research type)
+6. **Choose output formats**
+7. **Start monitoring**
+
+### During Monitoring
+
+- Use the target addon normally
+- FluidSnoop captures behavior in background
+- Events buffered to memory, flushed to SQLite
+- Real-time stats available
+
+### Stopping & Exporting
+
+1. Return to FluidSnoop
+2. Select active session
+3. Choose "Stop Monitoring"
+4. Export results in preferred formats
+
+### Comparing Sessions
+
+1. Select "Compare Sessions" from main menu
+2. Choose baseline session
+3. Choose comparison session
+4. View differences report
+
+## Configuration
+
+### Settings Categories
+
+**General**
+- Output path for exports
+- Auto-save sessions
+- Maximum log age
+- Wizard tips
+- Power user mode
+
+**Output Formats**
+- Default format preferences
+- Auto-open results
+
+**Available Modules**
+- Enable/disable individual modules
+- System-wide module availability
+
+**Research Defaults**
+- Default target addon
+- Auto-select modules
+- Confirm injection
+
+**Advanced**
+- Debug mode
+- Max events per session
+- Buffer size
+
+## Architecture
+
+```
+plugin.program.fluidsnoop/
+├── addon.py                    # Entry point
+├── addon.xml                   # Addon manifest
+├── resources/
+│   ├── settings.xml           # Configuration UI
+│   ├── language/              # Translations
+│   └── lib/
+│       ├── core/
+│       │   ├── config.py      # Configuration management
+│       │   └── router.py      # Request routing
+│       ├── persistence/
+│       │   └── database.py    # SQLite operations
+│       ├── wizard/
+│       │   ├── research_types.py  # Research definitions
+│       │   └── wizard_flow.py     # Wizard state machine
+│       └── modules/
+│           ├── ui_intercept.py    # UI monitoring
+│           ├── db_spy.py          # Database monitoring
+│           ├── net_monitor.py     # Network monitoring
+│           ├── runtime_hook.py    # Function hooking
+│           ├── fs_monitor.py      # Filesystem monitoring
+│           ├── code_inject.py     # Snippet generation
+│           ├── pattern_extract.py # Pattern analysis
+│           └── export_handler.py  # Multi-format export
+```
+
+## Module Details
+
+### UI Intercept
+Captures all `xbmcgui.Dialog` calls including:
+- `ok()`, `yesno()`, `notification()`
+- `textviewer()`, `browse()`, `input()`
+- `select()`, `multiselect()`
+- `DialogProgress` create/update/close
+
+### DB Spy
+Monitors `sqlite3` operations:
+- Connection wrapping
+- Cursor execute/executemany/executescript
+- SQL parsing for table extraction
+- Schema introspection
+
+### Network Monitor
+Tracks HTTP requests:
+- `urllib.request.urlopen` wrapping
+- `requests` library hooking (if available)
+- URL pattern extraction
+- Timing and status capture
+
+### Runtime Hook
+Monkey-patches `__import__`:
+- Wraps addon module functions
+- Call argument/result logging
+- Stack trace capture
+- Recursion protection
+
+### Filesystem Monitor
+Tracks file operations:
+- `xbmcvfs.copy/delete/exists`
+- `shutil.copy`
+- `os.remove`
+
+### Code Injector
+Generates instrumentation code:
+- Logger injection templates
+- Function tracer decorators
+- UI tracker snippets
+- DB tracker snippets
+
+## Research Types
+
+| Type | Modules | Purpose |
+|------|---------|---------|
+| favorites_extraction | db, ui | Extract add/remove/show favorites |
+| download_flow | network, fs, ui | Trace download sequence |
+| hook_debug | runtime, ui | Compare addon versions |
+| menu_structure | runtime, ui | Map navigation flow |
+| ui_audit | ui | Find all user-facing text |
+| network_study | network, pattern | API endpoint discovery |
+| db_reverse | db | Table structure extraction |
+| addon_compare | runtime, db, ui | Side-by-side comparison |
+| custom | user selected | Fully configurable |
+
+## Database Schema
+
+### Sessions Table
+- `id`: Session identifier
+- `research_type`: Type of research
+- `target_addon`: Target addon ID(s)
+- `modules`: JSON array of used modules
+- `formats`: JSON array of export formats
+- `status`: active/completed/archived
+- `created/updated`: Timestamps
+
+### Events Table
+- `id`: Event identifier
+- `session_id`: Parent session
+- `timestamp`: Event time
+- `module`: Source module
+- `event_type`: Event classification
+- `data`: JSON event payload
+
+### Comparisons Table
+- `id`: Comparison identifier
+- `session_1/2_id`: Compared sessions
+- `report_path`: Generated report
+- `created`: Timestamp
+
+## API Usage
+
+### From Other Addons
+
+```python
+# Get FluidSnoop config
+import xbmcaddon
+fs = xbmcaddon.Addon('plugin.program.fluidsnoop')
+
+# Check if monitoring active
+active = fs.getSetting('active_session')
+```
+
+### Extending Modules
+
+Create custom module in `resources/lib/modules/`:
+
+```python
+class CustomModule:
+    def __init__(self, config):
+        self.config = config
+        self.active = False
+    
+    def start(self, session_id=None, target_filter=None):
+        # Hook target
+        self.active = True
+    
+    def stop(self):
+        # Unhook and cleanup
+        self.active = False
+```
+
+## Troubleshooting
+
+### No events captured
+- Check target addon is being used
+- Verify module is enabled in settings
+- Check target filter isn't too restrictive
+
+### Performance issues
+- Reduce buffer size in settings
+- Disable unused modules
+- Limit event count per session
+
+### Database errors
+- Check write permissions to `special://profile/addon_data/`
+- Verify SQLite is available (built into Kodi Python)
+
+## Development
+
+### Adding Research Types
+
+Edit `resources/lib/wizard/research_types.py`:
+
+```python
+RESEARCH_TYPES['my_research'] = {
+    'name': 31299,  # Add to strings.po
+    'description': 'My custom research',
+    'icon': 'DefaultAddon.png',
+    'modules': ['ui', 'runtime'],
+    'auto_select': True,
+    'advice': 'Helpful advice text',
+    'formats': ['json', 'ai_handoff']
+}
+```
+
+### Adding Export Formats
+
+Edit `resources/lib/modules/export_handler.py` and add method:
+
+```python
+def _export_myformat(self, session_id, db):
+    # Generate export
+    return {'format': 'myformat', 'path': filepath}
+```
+
+## License
+
+GPL-2.0-or-later
+
+## Credits
+
+Tha-G-Thang Development
+Kodi Community - APIs and inspiration

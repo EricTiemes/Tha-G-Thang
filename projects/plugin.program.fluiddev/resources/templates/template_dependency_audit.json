@@ -1,0 +1,19 @@
+{
+  "id": "dependency_audit_v1",
+  "name": "Dependency & Import Audit",
+  "description": "Comprehensive analysis of addon dependencies and imports",
+  "version": "1.0",
+  "module": "dependency_mapper",
+  "target_files": ["addon.xml", "*.py"],
+  "filters": {
+    "look_for": ["script.module.", "import requests", "from xbmc"],
+    "flag_unofficial_repos": true,
+    "check_missing_deps": true
+  },
+  "delivery_format": "ai_handoff",
+  "options": {
+    "max_files": 50,
+    "recursive": true,
+    "include_tests": false
+  }
+}

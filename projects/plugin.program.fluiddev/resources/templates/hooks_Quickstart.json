@@ -1,0 +1,18 @@
+{
+        "id": "hooks_quickstart",
+        "name": "Quick Hook Finder",
+        "description": "Find entry points and framework hooks",
+        "version": "1.0",
+        "module": "hook_tracer",
+        "target_files": ["default.py", "addon.py", "main.py", "service.py"],
+        "filters": {
+            "find_entry_points": True,
+            "find_framework_hooks": True,
+            "frameworks": ["xbmc", "simpleplugin", "routing"]
+        },
+        "delivery_format": "ai_handoff",
+        "options": {
+            "max_depth": 2,
+            "show_unreachable": False
+        }
+    }

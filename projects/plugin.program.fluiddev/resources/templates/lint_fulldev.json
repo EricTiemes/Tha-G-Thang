@@ -1,0 +1,35 @@
+{
+    "id": "lint_fulldev",
+    "name": "Linting - FullDev",
+    "description": "Comprehensive code linting with detailed analysis",
+    "version": "1.0",
+    "module": "linter",
+    "mode": "fulldev",
+    "options": {
+        "check_syntax": true,
+        "check_style": true,
+        "check_imports": true,
+        "check_complexity": true,
+        "check_security": true,
+        "check_performance": true,
+        "check_best_practices": true,
+        "max_line_length": 120,
+        "max_complexity": 10,
+        "ignore_warnings": false,
+        "auto_fix": false
+    },
+    "output": {
+        "format": "detailed",
+        "save_report": true,
+        "export_json": true,
+        "show_notification": true,
+        "include_recommendations": true,
+        "group_by_severity": true
+    },
+    "advanced": {
+        "parallel_processing": false,
+        "cache_results": true,
+        "verbose_logging": true,
+        "custom_rules": []
+    }
+}

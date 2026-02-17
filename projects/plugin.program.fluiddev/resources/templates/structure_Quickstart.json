@@ -1,0 +1,18 @@
+{
+        "id": "structure_quickstart",
+        "name": "Quick Structure Check",
+        "description": "Fast overview of addon architecture",
+        "version": "1.0",
+        "module": "structure_analyzer",
+        "target_files": ["addon.xml", "default.py"],
+        "filters": {
+            "check_modularity": True,
+            "detect_frameworks": True,
+            "count_modules": True
+        },
+        "delivery_format": "ai_handoff",
+        "options": {
+            "max_depth": 1,
+            "include_similarity": False
+        }
+    }

@@ -1,0 +1,30 @@
+I've searched GitHub for your keywords and found several relevant projects that match your "Vision 1" for automating video library management. However, none specifically addressed "Vision 2" for playlist analysis, though one is close.
+
+Here is a summary of the most useful tools discovered, categorized by their function:
+
+| Project Name / Category | Primary Function & Why It's Useful | Key Takeaway for Your Addon |
+| :--- | :--- | :--- |
+| **Media Library Toolkit**  | A comprehensive CLI tool (`library`) to manage local and online video metadata in a SQLite database. | Enables **Vision 1**: You can scan local files and online playlists (YouTube) into a single structured database, which is the perfect foundation for comparing and deduplicating items . |
+| **Duplicate File Finder**  | `plex_dupefinder` finds duplicate media files in a Plex library using a scoring system (bitrate, resolution, codec) . | Demonstrates a robust logic for comparing local files. Its scoring config can inspire rules for deciding when to "replace local with stream." |
+| **YouTube Data Scrapers**  | Scripts to extract structured metadata (title, duration, stats) from YouTube playlists into JSON . | Provides the method to get clean, online data in JSON format for the comparison half of **Vision 1**. |
+| **General JSON Utilities**  | A collection of `json-compare` tools for diffing, filtering, and visualizing differences between JSON files/objects . | These are the essential "glue" components. Once you have local and online data in JSON, these tools can perform the actual comparison to identify duplicates or matches. |
+
+### 🔍 Deeper Analysis: The `reddit-playlists` Data Pipeline
+The `reddit-playlists` project is an excellent blueprint for the automation pipeline you're building . Its flow maps directly to your visions:
+1.  **Data Collection**: It scrapes track submissions from music subreddits using the **PRAW** library for the Reddit API.
+2.  **Data Structuring & Storage**: Extracted data (artist, track, subreddit) is organized and stored in **JSON configuration files**.
+3.  **Processing & Action**: A core script parses the submissions, matches them against **Spotify's API** (using Spotipy), and creates/updates playlists automatically .
+4.  **Automation**: The entire process is scheduled to run weekly using **GitHub Actions**.
+
+For your addon, you would replace "Reddit" with "local file scanner" or "YouTube API," and "Spotify" with "Kodi library," but the **architectural pattern is identical**.
+
+### 💡 Recommended Development Path
+To start building, I suggest a focused approach:
+1.  **Foundation**: Use the **`library` toolkit**  or a simple script with `ffprobe` to scan your local videos and output a consistent JSON list with hashes, titles, and file paths.
+2.  **Online Data**: Use or adapt a **YouTube scraper**  to get JSON metadata for the online videos you want to compare against.
+3.  **Core Logic**: Employ a **`json-compare`** library  to match titles and hashes between your two JSON lists. Integrate the scoring logic from **`plex_dupefinder`**  to decide match quality.
+4.  **Action**: Write the final script to generate Kodi `strm` files pointing to online streams, replacing the local files your logic deems inferior.
+
+While a direct tool for "Vision 2" (analyzing playlists to suggest library restructuring) wasn't found, the **Keyword Extractor API** or LLM-based keyword tools could be applied to video titles and descriptions from your JSON to generate new categories or prompts.
+
+I hope this gives you a concrete set of components to start with. If you would like me to look deeper into the setup or configuration of one of these specific tools, just let me know.

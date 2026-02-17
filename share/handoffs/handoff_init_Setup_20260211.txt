@@ -1,0 +1,9 @@
+**Done :**
+pkg update
+pkg install python nodejs git ruff openssh nano
+pip install pylint black --break-system-packages
+```
+**Next :**
+run git_init  # to complete setup. 
+Create extract/bundle/release scripts
+Configure git and push to GitHub

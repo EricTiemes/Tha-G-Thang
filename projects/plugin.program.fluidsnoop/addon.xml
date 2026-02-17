@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="plugin.program.fluidsnoop" version="2.0.0m" name="[COLOR goldenrod]Fluid[/COLOR]-Snoop" provider-name="Tha [COLOR goldenrod]G[/COLOR] Thang">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="addon.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>Live Runtime Inspector for Kodi Addons</summary>
+        <description>Monitor live addon behavior with targeted research wizard. Extract favorites systems, debug download flows, compare addon versions, audit UI messages. Features 6 monitoring modules, 9 research types, SQLite session history, and multi-format exports (JSON, AI Handoff, Compact, Detailed).</description>
+        <platform>all</platform>
+        <license>GPL-2.0-or-later</license>
+        <source>https://github.com/Tha-G-Thang/fluidsnoop/plugin.program.fluidsnoop</source>
+        <news>
+[B]FluidSnoop 2.0 - Complete Rewrite[/B]
+
+[B]New Features:[/B]
+• Research Wizard - 9 guided research types
+• Smart Module Selection - Auto-configures monitors
+• Session History - SQLite persistence and comparisons
+• Multi-Format Exports - JSON, AI Handoff, Compact, Detailed
+• Advisor System - Contextual configuration tips
+
+[B]Modules:[/B] UI Interceptor, DB Spy, Network Monitor, Runtime Hook, Filesystem Monitor, Code Injector
+
+[B]Research:[/B] Favorites, Downloads, Hook Debug, Menus, UI Audit, Network, DB Schema, Addon Compare, Custom
+
+[B]Improvements:[/B] Targeted monitoring, real-time buffering, power user mode, modular architecture
+        </news>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+        </assets>
+    </extension>
+</addon>

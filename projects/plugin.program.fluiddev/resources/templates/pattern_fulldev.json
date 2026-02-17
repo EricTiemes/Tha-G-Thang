@@ -1,0 +1,38 @@
+{
+    "id": "pattern_fulldev",
+    "name": "Pattern Extraction - FullDev",
+    "description": "Comprehensive code pattern analysis with custom detection",
+    "version": "1.0",
+    "module": "pattern_extractor",
+    "mode": "fulldev",
+    "options": {
+        "detect_routing_patterns": true,
+        "detect_menu_patterns": true,
+        "detect_scraper_patterns": true,
+        "detect_player_patterns": true,
+        "detect_settings_patterns": true,
+        "detect_context_menu_patterns": true,
+        "detect_database_patterns": true,
+        "detect_api_patterns": true,
+        "max_files": null,
+        "confidence_threshold": 0.5,
+        "include_code_snippets": true,
+        "analyze_pattern_frequency": true,
+        "suggest_refactoring": true
+    },
+    "output": {
+        "format": "detailed",
+        "save_report": true,
+        "export_json": true,
+        "export_markdown": true,
+        "show_notification": true,
+        "include_recommendations": true,
+        "group_by_pattern_type": true
+    },
+    "advanced": {
+        "parallel_processing": false,
+        "cache_results": true,
+        "verbose_logging": true,
+        "custom_pattern_definitions": []
+    }
+}

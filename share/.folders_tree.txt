@@ -1,0 +1,18 @@
+  ai
+  docs
+  docs/research
+  logs
+  projects
+  scripts 
+  scripts/lib
+  share
+  share/handoffs
+  share/todo
+  share/templates 
+  system
+  system/archived
+  system/config
+  system/internal
+  system/internal/system_blueprint.md
+   zips
+  

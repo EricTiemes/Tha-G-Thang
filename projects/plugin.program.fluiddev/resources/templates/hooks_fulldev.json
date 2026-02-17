@@ -1,0 +1,36 @@
+{
+    "id": "hooks_fulldev",
+    "name": "Hook Tracing - FullDev",
+    "description": "Comprehensive Kodi hook analysis and lifecycle tracing",
+    "version": "1.0",
+    "module": "hook_tracer",
+    "mode": "fulldev",
+    "options": {
+        "trace_plugin_hooks": true,
+        "trace_service_hooks": true,
+        "trace_monitor_hooks": true,
+        "trace_player_hooks": true,
+        "trace_window_hooks": true,
+        "trace_settings_hooks": true,
+        "max_depth": null,
+        "analyze_hook_order": true,
+        "detect_unused_hooks": true,
+        "trace_callback_chains": true,
+        "analyze_lifecycle": true,
+        "check_best_practices": true
+    },
+    "output": {
+        "format": "detailed",
+        "save_report": true,
+        "export_json": true,
+        "export_flowchart": true,
+        "show_notification": true,
+        "include_recommendations": true,
+        "generate_hook_timeline": true
+    },
+    "advanced": {
+        "parallel_processing": false,
+        "cache_results": true,
+        "verbose_logging": true
+    }
+}

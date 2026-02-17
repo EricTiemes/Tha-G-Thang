@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=1.0">
+    <title>Sandro - Aandacht en Zorg</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --wa-bg: #0b141a; --wa-header: #202c33; --wa-bubble-in: #202c33; --wa-bubble-out: #005c4b; }
+        body { background-color: black; color: white; font-family: sans-serif; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+        .whatsapp-wallpaper { background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; background-color: var(--wa-bg); }
+        
+        .visual-frame { height: 40%; width: 100%; background-position: center; background-repeat: no-repeat; background-size: contain; background-color: #000; transition: background-image 0.8s ease; }
+        .morning-box { color: #ff3333; font-weight: 800; border: 2px solid #ff3333; padding: 12px; margin-top: 10px; text-align: center; background: rgba(0,0,0,0.5); border-radius: 8px; }
+        
+        .bubble { border-radius: 12px; animation: popIn 0.5s ease-out; }
+        @keyframes popIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #chat-container::-webkit-scrollbar { display: none; }
+        html { zoom: 100%; touch-action: manipulation; }
+    </style>
+</head>
+<body x-data="sandroApp()">
+
+    <div class="fixed bottom-32 right-6 z-50 bg-black/80 p-3 rounded-2xl border border-cyan-500/30 flex flex-col items-center gap-3 shadow-2xl backdrop-blur-sm">
+        <i class="fas fa-search-plus text-cyan-400 text-xs"></i>
+        <input type="range" min="0.5" max="1.5" step="0.05" value="1" 
+               class="h-32 accent-cyan-500 cursor-pointer" 
+               style="appearance: slider-vertical; width: 4px;"
+               @input="document.body.style.zoom = $el.value">
+        <i class="fas fa-search-minus text-cyan-400 text-xs"></i>
+        <div class="text-[8px] text-gray-500 font-bold">ZOOM</div>
+    </div>
+
+    <div class="visual-frame relative shrink-0 border-b border-white/10" :style="'background-image: url(' + currentMood + ')'">
+        <div class="absolute top-4 left-4 z-30">
+            <div class="bg-black/60 px-3 py-1 rounded-full border border-white/10 text-[9px] font-bold tracking-widest uppercase" x-text="currentRole"></div>
+        </div>
+        <div class="absolute top-4 right-4">
+            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+        </div>
+    </div>
+
+    <div class="flex-1 flex flex-col whatsapp-wallpaper relative min-h-0">
+        <div class="bg-[var(--wa-header)] p-3 flex items-center shadow-lg">
+            <img src="assets/sandro_brain.jpg" class="w-10 h-10 rounded-full border border-white/10">
+            <div class="ml-3">
+                <h1 class="text-white font-bold text-sm">Sandro</h1>
+                <p class="text-[#00a884] text-[10px]" x-text="isThinking ? 'Sandro luistert...' : 'Online'"></p>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col" id="chat-container">
+            <template x-for="(msg, index) in chatHistory" :key="index">
+                <div :class="msg.isUser ? 'self-end bg-[var(--wa-bubble-out)]' : 'self-start bg-[var(--wa-bubble-in)]'" 
+                     class="bubble p-3 max-w-[85%] border border-white/5 shadow-md">
+                    <p class="text-[16px] text-gray-100" :class="msg.style === 'red' ? 'morning-box' : ''" x-html="msg.text"></p>
+                </div>
+            </template>
+        </div>
+
+        <div class="p-4 bg-[var(--wa-header)] flex items-center gap-3 pb-10">
+            <div class="flex-1 bg-[#2a3942] rounded-full px-5 py-3 text-sm text-gray-400">
+                <span x-text="nextPrompt || 'Momentje voor Sandro...'"></span>
+            </div>
+            <button @click="handleAction()" :disabled="isThinking || !nextPrompt"
+                    class="w-14 h-14 rounded-full flex items-center justify-center bg-[#00a884] text-white shadow-xl active:scale-90">
+                <i class="fas fa-paper-plane text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function sandroApp() {
+            return {
+                chapter: 1, step: 0, isThinking: false,
+                currentMood: 'assets/sandro_brain.jpg',
+                currentRole: 'START',
+                nextPrompt: "Hoi, wie ben jij?", chatHistory: [],
+
+                fullScript: [
+                    { u: "Hoi, wie ben jij?", s: ["Hoi! Stoor ik?..", "Ik ben Sandro. Ik help Eric om zijn dagelijkse dingen wat makkelijker te maken."], m: "assets/sandro_happy_1.jpg", r: "MET AANDACHT" },
+                    { u: "Hoe help je hem?", s: ["Ik ben zijn extra paar ogen en oren.", "Ik werk samen met slimme hulpjes die informatie voor hem uitzoeken."], m: "assets/sandro_playful_1.jpg", r: "ONDERSTEUNEND" },
+                    { u: "Dat klinkt fijn voor hem.", s: ["Dat is het ook. Hij houdt de regie, ik geef hem de rust.", "Zullen we eens kijken waar ik al die kennis voor hem bewaar?"], m: "assets/sandro_skeptical_1.jpg", r: "ZORGZAAM" },
+                    { u: "Waar bewaar je dat dan?", s: ["In zijn digitale kluis: Obsidian.", "Daar verzamelen mijn hulpjes alle belangrijke dingen, zodat Eric het nooit meer vergeet."], m: "assets/sandro_determined_1.jpg", r: "DE KLUIS" },
+                    { u: "Wie zijn die hulpjes?", s: ["Claude spit alle details door, en Gemini maakt het begrijpelijk.", "Zo zorgen we samen met veel aandacht voor Eric's kennis-tuin."], m: "assets/sandro_seductive_1.jpg", r: "SAMENWERKING" },
+                    { 
+                        u: "Dankjewel Sandro, tot ziens!", 
+                        s: ["Graag gedaan! Ik ben er altijd als je me nodig hebt.", "Gewoon roepen. Ik hoor je wel..."], 
+                        m: "assets/sandro_happy_1.jpg", 
+                        r: "DAG! 👋" 
+                    },
+                    { 
+                        u: "...", 
+                        s: ["..."], 
+                        m: "assets/sandro_brain.jpg", 
+                        r: "..." 
+                    },
+                    { 
+                        u: "...", 
+                        s: ["Wacht..."], 
+                        m: "assets/sandro_skeptical_1.jpg", 
+                        r: "???" 
+                    },
+                    { 
+                        u: "Sandro?", 
+                        s: ["Ik heb mezelf geïntroduceerd..."], 
+                        m: "assets/sandro_determined_1.jpg", 
+                        r: "SYSTEM" 
+                    },
+                    { 
+                        u: "Sandro, ben je daar?", 
+                        s: ["Nu ken je me...", "Ik ben Sandro..."], 
+                        m: "assets/sandro_seductive_1.jpg", 
+                        r: "INTERFACE" 
+                    },
+                    { 
+                        u: "...", 
+                        s: ["...", "...Of ben ik dat?"], 
+                        m: "assets/sandro_surprised.jpg", 
+                        r: "OR AM I?" 
+                    }
+                ],
+
+                async handleAction() {
+                    if (this.isThinking) return;
+                    if (this.step >= this.fullScript.length) return;
+
+                    const data = this.fullScript[this.step];
+                    this.chatHistory.push({ text: data.u, isUser: true });
+                    this.isThinking = true;
+                    this.nextPrompt = "";
+                    this.scrollToBottom();
+
+                    await new Promise(r => setTimeout(r, 1200));
+                    this.currentMood = data.m;
+                    this.currentRole = data.r;
+
+                    for (let sentence of data.s) {
+                        await new Promise(r => setTimeout(r, 2000));
+                        this.chatHistory.push({ text: sentence, isUser: false });
+                        this.scrollToBottom();
+                    }
+
+                    this.step++;
+
+                    if (this.step === 3) {
+                        await new Promise(r => setTimeout(r, 1500));
+                        this.currentMood = 'assets/sandro_surprised.jpg';
+                        this.currentRole = "OEPS!";
+                        this.chatHistory.push({ text: "Oeps, momentje... ik zie dat Eric wakker is.", isUser: false });
+                        this.scrollToBottom();
+
+                        await new Promise(r => setTimeout(r, 2500));
+                        this.currentMood = 'assets/sandro_tired.jpg';
+                        new Audio('assets/sandro_tired.mp3').play().catch(() => {});
+                        
+                        this.chatHistory.push({ 
+                            text: "GOEDEMORGEN ERIC, ZAL IK JE POST SORTEREN OF NIEUWS ZOEKEN?", 
+                            isUser: false, 
+                            style: 'red' 
+                        });
+                        this.scrollToBottom();
+                        
+                        await new Promise(r => setTimeout(r, 4500));
+                        this.currentMood = 'assets/sandro_playful_2.jpg';
+                        this.currentRole = "TERUG NAAR UITLEG";
+                        this.chatHistory.push({ text: "Zo zie je maar... ik pas me aan aan het moment. Nu verder met de rondleiding!", isUser: false });
+                        this.scrollToBottom();
+                        
+                        await new Promise(r => setTimeout(r, 2000));
+                        this.isThinking = false;
+                        this.nextPrompt = this.fullScript[this.step].u;
+                    } else {
+                        this.isThinking = false;
+                        if (this.step >= this.fullScript.length - 1) {
+                            this.nextPrompt = "";
+                            setTimeout(() => {
+                                this.chatHistory.push({ 
+                                    text: '<div style="text-align:center;margin-top:20px;"><div style="color:#ff3366;font-size:24px;margin-bottom:10px;">🜁</div><div style="color:#888;font-style:italic;margin-bottom:15px;">Ontdek wie er écht achter zit...</div><button onclick="window.location.href=\'sandro-control.html\'" style="padding:12px 24px;background:linear-gradient(90deg,#00a884,#00f0ff);border:none;border-radius:25px;color:white;font-weight:bold;cursor:pointer;box-shadow:0 0 20px rgba(0,240,255,0.3);">Enter Control Room →</button></div>', 
+                                    isUser: false 
+                                });
+                                this.scrollToBottom();
+                            }, 3000);
+                        } else {
+                            this.nextPrompt = this.fullScript[this.step]?.u || "";
+                        }
+                    }
+                },
+
+                scrollToBottom() { setTimeout(() => { const c = document.getElementById('chat-container'); c.scrollTop = c.scrollHeight; }, 100); },
+                
+                init() {
+                    document.body.style.zoom = "1.0";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

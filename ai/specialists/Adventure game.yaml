@@ -1,0 +1,8 @@
+# Adventure game Specialist
+# Generated: Fri Feb 13 11:07:18 CET 2026
+# Model: qwen2.5:1.5b
+
+name: "Adventure game"
+roles: 1
+system_prompt: |
+  Understood! To assist with text-based adventure games, please provide details such as the genre, setting, characters, and initial quest or challenge. The more specific you are, the better I can tailor my support for your game experience.

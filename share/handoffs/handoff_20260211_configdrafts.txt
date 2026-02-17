@@ -1,0 +1,238 @@
+## 📦 Delivery: All Private Config Files – Draft Versions
+
+**All paths are relative to repo root.**  
+These files are **private** – ensure they are **gitignored**
+
+---
+
+## 📁 File Set (Copy‑Paste Ready)
+
+### 1. `system/config/ai_protocol.yaml`
+```yaml
+# AI Protocol – Base Configuration (DRAFT)
+# Version: 1.0
+# Neutral facts, paths, and generic preferences.
+# Override per task via scenario or handoff overrides.
+
+version: 1.0
+project: "Tha G👑 Thang"
+
+ai:
+  # Default fallback role – overridden by scenarios
+  default_role: "assistant"
+
+  # Generic preferences (no coding bias)
+  preferences:
+    output_formats: [".txt", ".json", ".sh", ".py", ".md", ".yaml"]
+    interaction_mode: "refine"          # Suggest → Wait → Refine
+    delta_only: false                  # Base is not coding‑specific
+    explanation_level: "on_request"    # Explain only when asked
+    no_citations: false               # Allow citations in creative modes
+    no_emoticons: false              # Allow emoticons in non‑coding contexts
+    minimal_comments: false          # Comments allowed unless scenario restricts
+
+  # All paths relative to repo root
+  paths:
+    templates: "system/templates"
+    skills_index: "system/skills/index.txt"
+    roles_index: "system/roles/index.txt"
+    handoffs: "share/handoffs"
+    internal_docs: "system/internal"
+    blueprint: "docs/Blueprint_Modulair.txt"
+
+  # Environment facts (detected or declared)
+  environment:
+    has_termux: true
+    has_obsidian: false                # Flip when Obsidian workflow active
+    has_git: true
+    available_tools: ["ruff", "tree", "python", "bash", "zip"]
+
+  # AI discovers available skills/roles from index files – NOT hardcoded here
+  # See system/skills/index.txt and system/roles/index.txt
+```
+
+---
+
+### 2. `system/config/scenarios/coding.yaml`
+```yaml
+# Scenario: Coding & Development (DRAFT)
+# Strict rules for code generation, patching, and analysis.
+# Merge with base protocol (ai_protocol.yaml).
+
+ai:
+  default_role: "senior_python_dev"
+
+  preferences:
+    output_formats: [".py", ".patch", ".diff", ".json"]
+    delta_only: true                  # Touch only changed lines
+    no_citations: true               # No academic footnotes
+    no_emoticons: true
+    minimal_comments: true           # Only when logic is non‑obvious
+    explanation_level: "none"        # Unless explicitly asked with "explain:"
+    touch_existing_code: "only_discussed_first"  # Never modify unrelated code
+```
+
+---
+
+### 3. `system/config/scenarios/brainstorm.yaml`
+```yaml
+# Scenario: Brainstorming & Ideation (DRAFT)
+# Loose, creative, exploratory – no strict formatting.
+
+ai:
+  default_role: "creative_partner"
+
+  preferences:
+    output_formats: [".txt", ".md", ".json", ".yaml"]
+    delta_only: false
+    no_citations: false
+    no_emoticons: false
+    minimal_comments: false
+    explanation_level: "detailed"
+```
+
+---
+
+### 4. `system/config/scenarios/handoff.yaml`
+```yaml
+# Scenario: Handoff / Session Transfer (DRAFT)
+# Compact, lossless context transfer between AI sessions.
+
+ai:
+  default_role: "archivist"
+
+  preferences:
+    output_formats: [".yaml", ".json", ".txt", ".md"]
+    delta_only: true                 # Only the handoff delta
+    no_citations: true
+    no_emoticons: true
+    minimal_comments: true
+    explanation_level: "none"
+    handoff_format: "structured"    # YAML/JSON with required fields: scenario, task, context, overrides
+```
+
+---
+
+### 5. `.gitignore`
+```
+# Private directories – never commit to GitHub
+/system/
+/vault/
+/sandro/
+/logs/
+/zips/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.pyc
+__pycache__/
+*.swp
+*.swo
+
+# Local environment
+.env
+.venv/
+venv/
+```
+
+---
+
+### 6. `system/internal/repo_manifest.md`
+```markdown
+# Internal Repository Manifest – Tha G👑 Thang (DRAFT)
+
+*Do not commit to public remotes. Keep local only.*
+
+---
+
+## 🗂 Full Directory Structure (as used locally)
+
+```
+/
+├── projects/          # Kodi addons (synced to GitHub)
+│   ├── plugin.program.fluid/
+│   ├── plugin.program.fluidsnoop/
+│   └── ...
+├── scripts/           # Build/dev scripts (local only)
+├── system/           # LOCAL ONLY – not synced
+│   ├── config/       # AI protocol, scenarios
+│   ├── roles/        # AI role definitions
+│   ├── skills/       # AI‑executable capabilities
+│   ├── templates/    # Reusable prompt/action templates
+│   └── internal/     # Private manifests, blueprints
+├── share/handoffs/   # AI collaboration artifacts
+├── vault/           # Obsidian notes (private)
+├── sandro/          # AI assistant context (legacy/on hold)
+├── logs/            # Script output logs
+├── zips/            # Bundled addon releases
+└── docs/            # Architecture blueprints, research
+```
+
+---
+
+## 🔁 Workflow (Local Only)
+
+1. **Edit** – work inside `projects/plugin.program.*/`
+2. **Script** – run from `scripts/`:
+   - `lint.sh` – ruff check
+   - `bundle.sh` – create zip in `/zips/`
+   - `tree.sh` – generate directory tree
+3. **Build** – outputs → `/zips/`
+4. **Log** – activity → `/logs/`
+
+All scripts are idempotent and minimal.
+
+---
+
+## 🧱 Architecture Blueprint
+
+We follow **strict one‑way dependency flow**:
+
+```
+Entry points → Modules → Core libraries
+```
+
+- **Core** never imports modules.  
+- **Modules** declare dependencies explicitly.  
+- **Settings** control everything at runtime.
+
+**Deletion test:** remove any module folder → rest of addon still works.
+
+📘 Full blueprint: [`/docs/Blueprint_Modulair.txt`](/docs/Blueprint_Modulair.txt)
+
+---
+
+## 🤖 AI Protocol Reference
+
+All AI interaction rules are **private** and live in `/system/config/`.
+
+| File | Purpose |
+|------|---------|
+| `ai_protocol.yaml` | Base: neutral facts, paths, generic preferences |
+| `scenarios/coding.yaml` | Strict coding rules (delta‑only, no fluff) |
+| `scenarios/brainstorm.yaml` | Loose creative rules |
+| `scenarios/handoff.yaml` | Compact structured handoff rules |
+
+**AI sessions must:**  
+- Read the base protocol first.  
+- Apply scenario overrides if specified.  
+- Respect public/private boundaries.  
+
+**Handoff files** (in `/share/handoffs/`) may contain inline overrides with highest precedence.
+
+---
+
+## 🔐 Privacy Enforcement
+
+- `/system/`, `/vault/`, `/sandro/`, `/logs/`, `/zips/` are **gitignored** – never pushed.  
+- This manifest is **internal only** – do not share publicly.  
+- Public `README.md` contains **no internal paths or workflows**.
+```
+
+---
+
+## ✅ Next Steps for You
+
+1. **Review each draft** – adjust preferences, paths, or wording as you see fit.  
+4. **Ensure `.gitignore` is active** 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+    <setting id="general.auto_save" type="bool" label="30002" default="true"/>
+    <setting id="general.max_log_age_days" type="slider" label="30003" default="30" range="7,365,1"/>
+    <setting id="general.show_wizard_tips" type="bool" label="30004" default="true"/>
+    <setting id="general.power_user_mode" type="bool" label="30005" default="false"/>
+    <setting id="format.default_json" type="bool" label="30101" default="true"/>
+    <setting id="format.default_ai_handoff" type="bool" label="30102" default="true"/>
+    <setting id="format.default_compact" type="bool" label="30103" default="false"/>
+    <setting id="format.default_detailed" type="bool" label="30104" default="false"/>
+    <setting id="format.auto_open" type="bool" label="30105" default="false"/>
+    <setting id="module.enable_ui" type="bool" label="30201" default="true"/>
+    <setting id="module.enable_db" type="bool" label="30202" default="true"/>
+    <setting id="module.enable_network" type="bool" label="30203" default="true"/>
+    <setting id="module.enable_runtime" type="bool" label="30204" default="true"/>
+    <setting id="module.enable_fs" type="bool" label="30205" default="true"/>
+    <setting id="module.enable_inject" type="bool" label="30206" default="false"/>
+    <setting id="research.auto_select_modules" type="bool" label="30302" default="true"/>
+    <setting id="research.confirm_inject" type="bool" label="30303" default="true"/>
+    <setting id="advanced.debug_mode" type="bool" label="30401" default="false"/>
+    <setting id="advanced.max_events_per_session" type="slider" label="30402" default="10000" range="1000,50000,1000"/>
+    <setting id="advanced.buffer_size" type="slider" label="30403" default="100" range="10,500,10"/>
+</settings>

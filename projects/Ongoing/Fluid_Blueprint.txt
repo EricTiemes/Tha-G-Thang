@@ -1,0 +1,91 @@
+## Blueprint — Rules We Follow
+
+**Architecture**
+- Modular — each feature is a self-contained folder under `modules/`
+- Auto-discovery via `modules/__init__.py` — adding a module requires zero changes to core
+- Each module exposes `MODULE_ROUTES` dict — router never hardcodes module internals
+- Core folder (`core/`) only — no business logic, only shared tools
+
+**Central tools (core/)**
+- `intelligence.py` — all pattern matching, classification, URL building, yt-meta
+- `cleaner.py` — all text and file cleaning
+- `database.py` — single connection point, query/execute/one helpers
+- `config.py` — all settings access, never raw `addon.getSetting()` outside this file
+- `kodi_utils.py` — all Kodi UI calls, theme, dialogs
+- `logger.py` — all logging
+
+**URL safety — absolute rule**
+- `is_url()` checked before any string manipulation
+- `http://`, `https://`, `plugin://`, `davs://`, `smb://`, `special://`, `rtmp://`, `rtsp://`, `nfs://` — all untouched
+- Applies in cleaner, builder, intelligence — everywhere
+
+**Settings**
+- Three tiers: Simple / Advanced / Pro — visibility by `eq(settings_mode,value)`
+- Module enable + menu visibility are separate toggles
+- Core modules (downloader, delivery) default `True`; optional modules default `False`
+- Discrete naming templates independent for folders and buckets
+
+**Menus & context**
+- Context only shows items enabled in settings, capped at `context_max_items`
+- Single item → executes directly, no dialog
+- `add_favorite` always asks which bucket
+- Main menu only shows enabled + visible modules
+
+**Flow**
+- Background mode: download queued → service picks up (30s) → yt-dlp runs → delivery queued → service delivers
+- One download at a time in background — no strain during playback
+- Copy vs move controlled by `move_files` setting
+- Remote delivery: delete local optional via `delete_after_remote`
+- Private content: discrete template applied to path, type never in folder name
+
+**Privacy**
+- Private buckets never indexed as classification keywords
+- Timestamp filenames optional
+- EXIF/metadata strip optional
+- Obfuscated bucket display names optional
+
+---
+
+## Current File Structure
+
+```
+plugin.video.fluid/
+├── addon.xml
+├── default.py
+├── service.py
+├── context.py
+│
+└── resources/
+    ├── icon.png             
+    ├── fanart.jpg           
+    ├── language/
+    │   └── English/
+    │       └── strings.po
+    ├── settings.xml
+    └── lib/
+        ├── core/
+        │   ├── config.py
+        │   ├── database.py
+        │   ├── intelligence.py
+        │   ├── cleaner.py
+        │   ├── kodi_utils.py
+        │   ├── router.py
+        │   └── logger.py
+        └── modules/
+            ├── __init__.py
+            ├── downloader/
+            │   ├── __init__.py
+            │   └── engine.py
+            ├── delivery/
+            │   ├── __init__.py
+            │   └── router.py
+            ├── favorites/
+            │   ├── __init__.py
+            │   └── manager.py
+            ├── playlist/
+            │   ├── __init__.py
+            │   └── builder.py
+            └── meta/
+                ├── __init__.py
+                └── fetcher.py
+```

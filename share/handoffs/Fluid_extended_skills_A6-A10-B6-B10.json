@@ -1,0 +1,454 @@
+{
+  "extended_builder_skills": [
+    {
+      "skill_id": "A6",
+      "name": "free_tier_optimizer",
+      "class": "builder",
+      "purpose": "Optimize system configuration for free-tier AI model constraints including token limits, rate limits, and capability restrictions",
+      "inputs": [
+        "target_ai_model",
+        "system_configuration",
+        "free_tier_constraints",
+        "optimization_targets"
+      ],
+      "outputs": [
+        "optimized_configuration",
+        "fallback_strategies",
+        "capability_mapping"
+      ],
+      "preconditions": [
+        "ai_model_capabilities_known",
+        "free_tier_limits_documented"
+      ],
+      "constraints": [
+        "must_preserve_core_functionality",
+        "cannot_exceed_free_tier_quotas",
+        "must_provide_degradation_path"
+      ],
+      "failure_modes": [
+        "model_too_limited_for_requirements",
+        "optimization_conflicts_with_requirements",
+        "unknown_model_capabilities"
+      ],
+      "invocation_pattern": "planning",
+      "optimization_strategies": {
+        "prompt_compression": {
+          "description": "Reduce prompt size while preserving intent",
+          "use_when": "token_limits_approached",
+          "techniques": [
+            "summarization",
+            "keyword_extraction",
+            "context_pruning"
+          ]
+        },
+        "capability_sharding": {
+          "description": "Distribute tasks across multiple free-tier calls",
+          "use_when": "single_call_insufficient",
+          "pattern": "decompose \u2192 parallel_execute \u2192 aggregate"
+        },
+        "model_cascading": {
+          "description": "Use multiple models with fallback chain",
+          "use_when": "primary_model_unavailable",
+          "chain": "primary \u2192 secondary \u2192 local_llm"
+        }
+      },
+      "free_tier_mappings": {
+        "gemini": {
+          "daily_requests": 1500,
+          "tokens_per_minute": 100000,
+          "optimization": "aggressive_batching"
+        },
+        "chatgpt_4o_mini": {
+          "daily_requests": 200,
+          "tokens_per_minute": 200000,
+          "optimization": "prompt_caching"
+        },
+        "llama_local": {
+          "constraints": "device_dependent",
+          "optimization": "quantization_aware"
+        }
+      }
+    },
+    {
+      "skill_id": "A7",
+      "name": "context_window_manager",
+      "class": "builder",
+      "purpose": "Design context management strategies for limited context windows in free-tier AI models",
+      "inputs": [
+        "context_window_size",
+        "conversation_history",
+        "priority_context_items",
+        "compression_ratio"
+      ],
+      "outputs": [
+        "optimized_context_window",
+        "eviction_strategy",
+        "context_summary"
+      ],
+      "preconditions": [
+        "context_items_prioritized",
+        "window_size_known"
+      ],
+      "constraints": [
+        "critical_context_preserved",
+        "compression_reversible",
+        "performance_impact_minimal"
+      ],
+      "failure_modes": [
+        "context_too_large_even_compressed",
+        "critical_context_evicted",
+        "compression_corruption"
+      ],
+      "invocation_pattern": "mid_execution",
+      "context_strategies": {
+        "sliding_window": {
+          "description": "Keep only recent N messages",
+          "use_when": "streaming_conversation",
+          "window_size": "model_dependent"
+        },
+        "hierarchical_summarization": {
+          "description": "Summarize older context, keep recent verbatim",
+          "use_when": "long_conversation_history",
+          "levels": [
+            "full",
+            "summary",
+            "key_points"
+          ]
+        },
+        "semantic_retrieval": {
+          "description": "Store full context externally, retrieve relevant chunks",
+          "use_when": "very_large_context_required",
+          "requires": "vector_store"
+        }
+      },
+      "eviction_policies": {
+        "priority_based": "Keep high-priority items, evict low",
+        "recency_based": "Keep recent, evict old",
+        "relevance_based": "Keep relevant to current query, evict unrelated"
+      }
+    },
+    {
+      "skill_id": "A8",
+      "name": "output_schema_designer",
+      "class": "builder",
+      "purpose": "Design JSON schemas and output formats optimized for free-tier AI model generation",
+      "inputs": [
+        "required_output_structure",
+        "ai_model_capabilities",
+        "complexity_constraints",
+        "validation_requirements"
+      ],
+      "outputs": [
+        "optimized_schema",
+        "validation_rules",
+        "example_outputs",
+        "fallback_formats"
+      ],
+      "preconditions": [
+        "output_requirements_defined",
+        "model_capabilities_known"
+      ],
+      "constraints": [
+        "schema_must_validate",
+        "model_can_generate_compliant_output",
+        "fallback_for_partial_outputs"
+      ],
+      "failure_modes": [
+        "model_cannot_generate_valid_schema",
+        "schema_too_complex_for_model",
+        "validation_always_fails"
+      ],
+      "invocation_pattern": "post_execution",
+      "schema_optimization": {
+        "field_limiting": {
+          "description": "Reduce required fields to minimum",
+          "use_when": "model_struggles_with_complexity",
+          "approach": "required_only \u2192 optional_fields \u2192 nested_objects"
+        },
+        "type_simplification": {
+          "description": "Use simpler types (string vs enum)",
+          "use_when": "model_confused_by_constraints",
+          "mapping": "enum\u2192string, union\u2192string, nested\u2192flat"
+        },
+        "example_enrichment": {
+          "description": "Add more examples to prompt",
+          "use_when": "model_format_inconsistent",
+          "technique": "few_shot_with_schema"
+        }
+      },
+      "schema_tiers": {
+        "strict": "Full validation, all fields required",
+        "flexible": "Partial validation, optional fields allowed",
+        "minimal": "Basic structure only, content flexible"
+      }
+    },
+    {
+      "skill_id": "A10",
+      "name": "skill_registration_manager",
+      "class": "builder",
+      "purpose": "Manage registration of new skills with validation, dependency resolution, and integration into skill_registry",
+      "inputs": [
+        "skill_definition",
+        "skill_registry_current",
+        "dependency_graph",
+        "validation_rules"
+      ],
+      "outputs": [
+        "updated_registry",
+        "registration_confirmation",
+        "dependency_warnings",
+        "integration_report"
+      ],
+      "preconditions": [
+        "skill_definition_valid_json",
+        "skill_id_unique",
+        "dependencies_exist"
+      ],
+      "constraints": [
+        "no_duplicate_skill_ids",
+        "all_dependencies_must_exist",
+        "schema_validation_passed"
+      ],
+      "failure_modes": [
+        "duplicate_skill_id",
+        "missing_dependencies",
+        "schema_validation_failed",
+        "circular_dependency"
+      ],
+      "invocation_pattern": "build_time",
+      "registration_steps": {
+        "validate": "Check schema compliance",
+        "check_dependencies": "Verify all referenced skills exist",
+        "check_conflicts": "Ensure no ID collisions",
+        "register": "Add to registry",
+        "update_indexes": "Update skill_classes and authorization_levels counts"
+      },
+      "dependency_resolution": {
+        "strategy": "topological_sort",
+        "on_missing": "fail_with_error",
+        "on_circular": "detect_and_report"
+      }
+    }
+  ],
+  "extended_runtime_skills": [
+    {
+      "skill_id": "B6",
+      "name": "session_context_initializer",
+      "class": "runtime",
+      "purpose": "Initialize and load persistent context at the start of user sessions",
+      "inputs": [
+        "user_id",
+        "session_type",
+        "previous_session_data",
+        "context_retrieval_strategy"
+      ],
+      "outputs": [
+        "initialized_context",
+        "session_state",
+        "continuity_markers"
+      ],
+      "preconditions": [
+        "user_identified",
+        "context_store_accessible"
+      ],
+      "constraints": [
+        "privacy_settings_respected",
+        "context_size_limited",
+        "sensitive_data_filtered"
+      ],
+      "failure_modes": [
+        "context_store_unavailable",
+        "corrupted_session_data",
+        "privacy_violation_detected"
+      ],
+      "invocation_pattern": "task_start",
+      "context_sources": {
+        "local_storage": "Device-stored context from previous sessions",
+        "cloud_sync": "Synchronized context from cloud storage",
+        "session_memory": "In-memory context from current app session"
+      },
+      "initialization_modes": {
+        "fresh": "Start with empty context",
+        "resume": "Load from previous session",
+        "hybrid": "Merge fresh with selective historical context"
+      },
+      "android_specific": {
+        "storage_path": "/data/data/[package]/context/",
+        "encryption": "Android Keystore",
+        "sync_trigger": "on_session_start"
+      }
+    },
+    {
+      "skill_id": "B7",
+      "name": "error_recovery_handler",
+      "class": "runtime",
+      "purpose": "Detect execution errors and apply recovery strategies",
+      "inputs": [
+        "error_type",
+        "error_context",
+        "execution_state",
+        "recovery_policies"
+      ],
+      "outputs": [
+        "recovery_action",
+        "updated_state",
+        "error_report",
+        "continuation_plan"
+      ],
+      "preconditions": [
+        "error_detected",
+        "state_snapshot_available"
+      ],
+      "constraints": [
+        "data_integrity_preserved",
+        "no_infinite_retry_loops",
+        "user_notified_on_failure"
+      ],
+      "failure_modes": [
+        "unrecoverable_error",
+        "recovery_failed",
+        "state_corruption"
+      ],
+      "invocation_pattern": "on_failure",
+      "error_categories": {
+        "transient": {
+          "description": "Temporary failures, retry may succeed",
+          "examples": [
+            "network_timeout",
+            "rate_limit",
+            "temp_unavailable"
+          ],
+          "strategy": "exponential_backoff_retry"
+        },
+        "permanent": {
+          "description": "Persistent failures requiring alternative approach",
+          "examples": [
+            "invalid_api_key",
+            "permission_denied",
+            "not_found"
+          ],
+          "strategy": "fallback_or_escalate"
+        },
+        "logic": {
+          "description": "Application logic errors",
+          "examples": [
+            "validation_failed",
+            "constraint_violation"
+          ],
+          "strategy": "rollback_and_notify"
+        }
+      },
+      "recovery_strategies": {
+        "retry": "Attempt same operation again",
+        "fallback": "Use alternative skill or agent",
+        "rollback": "Revert to previous state",
+        "escalate": "Pass to human or review agent",
+        "degrade": "Continue with reduced functionality"
+      }
+    },
+    {
+      "skill_id": "B9",
+      "name": "execution_timeout_handler",
+      "class": "runtime",
+      "purpose": "Monitor execution duration and handle timeout conditions gracefully",
+      "inputs": [
+        "execution_start_time",
+        "max_duration_ms",
+        "current_progress",
+        "graceful_shutdown_options"
+      ],
+      "outputs": [
+        "timeout_action",
+        "partial_results",
+        "continuation_options",
+        "user_notification"
+      ],
+      "preconditions": [
+        "execution_started",
+        "timeout_configured"
+      ],
+      "constraints": [
+        "must_not_leave_orphaned_processes",
+        "partial_results_preserved",
+        "user_controlled_continuation"
+      ],
+      "failure_modes": [
+        "forced_termination",
+        "cleanup_failed",
+        "state_inconsistent"
+      ],
+      "invocation_pattern": "continuous",
+      "timeout_policies": {
+        "warning": {
+          "at_percent": 80,
+          "action": "notify_user_progress"
+        },
+        "soft_timeout": {
+          "at_percent": 100,
+          "action": "request_user_continue_or_stop"
+        },
+        "hard_timeout": {
+          "at_percent": 120,
+          "action": "force_stop_with_results"
+        }
+      },
+      "continuation_options": {
+        "resume": "Continue from where stopped",
+        "restart": "Start over with optimized approach",
+        "partial": "Deliver partial results",
+        "escalate": "Pass to more capable agent"
+      }
+    },
+    {
+      "skill_id": "B10",
+      "name": "output_quality_validator",
+      "class": "runtime",
+      "purpose": "Validate AI-generated outputs for quality, completeness, and schema compliance before delivery",
+      "inputs": [
+        "generated_output",
+        "expected_schema",
+        "quality_criteria",
+        "validation_level"
+      ],
+      "outputs": [
+        "validation_result",
+        "quality_score",
+        "defects_found",
+        "correction_suggestions"
+      ],
+      "preconditions": [
+        "generation_complete",
+        "validation_rules_loaded"
+      ],
+      "constraints": [
+        "validation_time_bounded",
+        "false_positives_minimized",
+        "critical_defects_blocking"
+      ],
+      "failure_modes": [
+        "validation_crashed",
+        "schema_mismatch",
+        "quality_below_threshold"
+      ],
+      "invocation_pattern": "post_execution",
+      "validation_dimensions": {
+        "schema_compliance": "Matches expected JSON/schema structure",
+        "completeness": "All required fields present and non-empty",
+        "coherence": "Output makes logical sense",
+        "accuracy": "Factual correctness (where verifiable)",
+        "safety": "No harmful or inappropriate content"
+      },
+      "quality_levels": {
+        "excellent": "No defects, exceeds requirements",
+        "good": "Minor issues, acceptable for delivery",
+        "fair": "Issues present, needs review",
+        "poor": "Major defects, must regenerate"
+      },
+      "auto_correction": {
+        "schema_fixes": "Attempt to repair malformed JSON",
+        "completion": "Fill missing fields with defaults",
+        "formatting": "Standardize formatting issues"
+      }
+    }
+  ]
+}

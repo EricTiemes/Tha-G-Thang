@@ -1,0 +1,23 @@
+{
+        "id": "bundle_fulldev",
+        "name": "Complete Reusable Package",
+        "description": "Full package with templates, docs, and starter code",
+        "version": "1.0",
+        "module": "code_bundler",
+        "target_files": ["*.py", "addon.xml", "resources/**"],
+        "filters": {
+            "bundle_type": "complete",
+            "include_metadata": True,
+            "include_structure": True,
+            "create_template": True,
+            "generate_docs": True
+        },
+        "delivery_format": "complete_package",
+        "options": {
+            "auto_export_acode": True,
+            "include_index": True,
+            "generate_ai_handoff": True,
+            "create_installer": False,
+            "compress": True
+        }
+    }

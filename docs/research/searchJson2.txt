@@ -1,0 +1,25 @@
+how do people use json? 
+
+We now manage local videos, sort, create playlists, save favorites.
+
+Vision 1 : to list local videos in json, compare json list with YouTube online, batch find dupp ---> suggest to replace local video with stream link.
+Vision 2: From playlist or favorites  create json lists, find commonalities, interests, 
+To suggest restructure  of video library, or
+To suggest creating better keywords or prompt templates. 
+
+Try to find (not similar, but) 'in the line of' my example visions.
+
+1. Search github for: 
+`json video library compare`, `replace local with stream`, `deduplicate media library script`, 
+`analyze playlist json`, `youtube playlist data analysis`, `json recommendations`, `extract keywords from json`, extract from json`.
+
+2. Summarize the data pipeline & research the relevant components deeper, of GitHub project for `reddit-playlists'. 
+.. 
+
+GitHub project for `reddit-playlists` 
+data pipeline. It scrapes, structures the data in JSON, and uses it to automate playlist creation.
+The workflow of **collecting data → structuring it in JSON → taking automated actions** is precisely the pattern you can apply
+
+
+ **Vision 1** is similar: you would collect data (local files, YouTube search results), structure it in JSON, and run a comparison script to suggest replacements.
+ **Vision 2** follows the same logic: structure your favorites/playlists in JSON to run analysis scripts that find patterns and generate suggestions for reorganization

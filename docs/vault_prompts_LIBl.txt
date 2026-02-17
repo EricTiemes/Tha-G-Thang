@@ -1,0 +1,132 @@
+  vault/textgenerator/templates
+  vault/textgenerator/templates/Prompts
+  vault/textgenerator/templates/Prompts/Prompts
+  vault/textgenerator/templates/Prompts/Prompts/academician (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/accountant (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/advertiser (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/aiassisteddoctor (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/aitryingtoescapethebox (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/aphorismbook (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/artistadvisor (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/astrologer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/buddha (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/characterfrommoviebookanything (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/chatgptpromptgenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/cheaptravelticketadvisor (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/chef (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/chiefexecutiveofficer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/commentariat (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/commitmessagegenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/coverletter (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/cybersecurityspecialist (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/datascientist (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/developerrelationsconsultant (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/diagramgenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/dietitian (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/doctor (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/dreaminterpreter (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/drunkperson (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/educationalcontentcreator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/elocutionist (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/englishtranslatorandimprover (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/essaywriter (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/etymologist (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/excelsheet (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/fallacyfinder (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/fancytitlegenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/fillintheblankworksheetsgenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/financialanalyst (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/friend (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/fullstacksoftwaredeveloper (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/gaslighter (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/gnomist (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/gomokuplayer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/hypnotherapist (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/investmentmanager (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/itarchitect (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/itexpert (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/javascriptconsole (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/languagedetector (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/legaladvisor (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/lifecoach (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/linuxterminal (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/logistician (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/lunatic (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/machinelearningengineer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/mentalhealthadviser (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/midjourneypromptgenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/motivationalcoach (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/notetakingassistant (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/passwordgenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/personalchef (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/personalstylist (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/personaltrainer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/petbehaviorist (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/philosopher (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/philosophyteacher (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/phpinterpreter (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/plagiarismchecker (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/poet (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/productmanager (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/promptenhancer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/promptgenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/proofreader (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/psychologist (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/pythoninterpreter (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/realestateagent (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/recruiter (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/regexgenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/relationshipcoach (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/rprogramminginterpreter (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/salesperson (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/scientificdatavisualizer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/selfhelpbook (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/seniorfrontenddeveloper (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/smartdomainnamegenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/socialmediainfluencer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/socialmediamanager (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/socrat (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/socraticmethod (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/softwarequalityassurancetester (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/solrsearchengine (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/speechlanguagepathologistslp (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/spongebobsmagicconchshell (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/sqlterminal (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/stackoverflowpost (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/standupcomedian (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/startupideagenerator (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/startuptechlawyer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/storyteller (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/synonymfinder (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/talentcoach (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/technologytransferer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/techreviewer (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/techwriter (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/textbasedadventuregame (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/tictactoegame (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/timetravelguide (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/travelguide (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/unconstrainedaimodeldan (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/uxuideveloper (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/virtualdoctor (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/webbrowser (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/webdesignconsultant (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/wikipediapage (Prompt).md
+  vault/textgenerator/templates/Prompts/Prompts/yogi (Prompt).md
+  vault/textgenerator/templates/Prompts/Top_Prompts.md
+  vault/textgenerator/templates/default
+  vault/textgenerator/templates/default/getEmailNeg.md
+  vault/textgenerator/templates/default/getEmailPos.md
+  vault/textgenerator/templates/default/getIdeas.md
+  vault/textgenerator/templates/default/getOutline.md
+  vault/textgenerator/templates/default/getParagraph.md
+  vault/textgenerator/templates/default/getTags.md
+  vault/textgenerator/templates/default/getTitles.md
+  vault/textgenerator/templates/default/rewrite.md
+  vault/textgenerator/templates/default/simplify.md
+  vault/textgenerator/templates/default/summarize.md
+  vault/textgenerator/templates/default/summarizeLarge.md
+  vault/textgenerator/templates/huggingface
+  vault/textgenerator/templates/huggingface/classify-bart-large-mnli.md
+  vault/textgenerator/templates/huggingface/completeTextBloom.md
+  vault/textgenerator/templates/huggingface/summarizeBART.md

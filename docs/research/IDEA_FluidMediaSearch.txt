@@ -1,0 +1,621 @@
+# FLUID MEDIA SEARCH - Complete Implementation Plan
+
+## PROJECT OVERVIEW
+
+**Name:** Fluid Media Search
+**Type:** Cross-platform intelligent search with AI-ready bundling
+**No login required:** Use public APIs, scraping, existing Kodi addons
+
+---
+
+## ARCHITECTURE
+
+```
+wizard.py          # User interface (questions)
+├── search_engine.py   # Orchestrator
+    ├── extractors/
+    │   ├── youtube.py     # yt-dlp wrapper
+    │   ├── reddit.py      # PRAW + fallback scraper
+    │   └── addon.py       # Kodi addon integration
+    ├── processors/
+    │   ├── scoring.py     # Relevance algorithm
+    │   ├── deduper.py     # FuzzyWuzzy matching
+    │   └── summarizer.py  # Text extraction
+    ├── exporters/
+    │   ├── bundle.py      # AI-ready formats
+    │   ├── playlist.py    # M3U generation
+    │   └── bucket.py      # Fluid DB integration
+    └── cache.py           # sqlite-utils FTS5
+```
+
+---
+
+## PHASE 1: CORE SEARCH (Proof of Concept)
+
+### 1.1 YouTube Extractor (yt-dlp)
+```python
+# extractors/youtube.py
+import yt_dlp
+
+def search_youtube(query, limit=20, sort='relevance'):
+    opts = {
+        'quiet': True,
+        'extract_flat': True,  # Metadata only, no download
+        'default_search': 'ytsearch',
+    }
+    
+    with yt_dlp.YoutubeDL(opts) as ydl:
+        results = ydl.extract_info(f"ytsearch{limit}:{query}", download=False)
+    
+    return [{
+        'title': entry['title'],
+        'url': entry['url'],
+        'source': 'YouTube',
+        'views': entry.get('view_count', 0),
+        'duration': entry.get('duration', 0),
+        'channel': entry.get('uploader', ''),
+        'age_days': days_since(entry.get('upload_date')),
+        'description': entry.get('description', '')[:500]
+    } for entry in results['entries']]
+```
+
+**No API key:** yt-dlp uses scraping, public endpoints
+
+### 1.2 Reddit Extractor (PRAW + Fallback)
+```python
+# extractors/reddit.py
+import praw
+import requests
+from bs4 import BeautifulSoup
+
+def search_reddit(query, limit=20, sort='relevance'):
+    try:
+        # Primary: PRAW (optional user auth for higher limits)
+        reddit = praw.Reddit(client_id='YOUR_ID', 
+                             client_secret='SECRET',
+                             user_agent='FluidSearch/1.0')
+        subreddit = reddit.subreddit('all')
+        results = subreddit.search(query, limit=limit, sort=sort)
+    except:
+        # Fallback: Public JSON API (no auth)
+        url = f"https://www.reddit.com/search.json?q={query}&limit={limit}"
+        results = requests.get(url, headers={'User-Agent': 'FluidSearch'}).json()
+        results = results['data']['children']
+    
+    return normalize_reddit(results)
+```
+
+**No login option:** Reddit's JSON API works without auth (rate-limited but usable)
+
+### 1.3 Deduplication (FuzzyWuzzy)
+```python
+# processors/deduper.py
+from fuzzywuzzy import fuzz
+
+def deduplicate(results, threshold=85):
+    seen = []
+    unique = []
+    
+    for item in results:
+        is_dupe = any(
+            fuzz.token_sort_ratio(item['title'], s['title']) > threshold
+            for s in seen
+        )
+        if not is_dupe:
+            unique.append(item)
+            seen.append(item)
+    
+    return unique
+```
+
+---
+
+## PHASE 2: INTELLIGENT PROCESSING
+
+### 2.1 Scoring Algorithm
+```python
+# processors/scoring.py
+def score_result(item, query_terms, user_prefs=None):
+    score = 0
+    title_lower = item['title'].lower()
+    
+    # Exact query match
+    if all(term in title_lower for term in query_terms):
+        score += 50
+    
+    # Partial match
+    score += sum(15 for term in query_terms if term in title_lower)
+    
+    # Recency (max +30)
+    if item['age_days'] < 7: score += 30
+    elif item['age_days'] < 30: score += 20
+    elif item['age_days'] < 90: score += 10
+    
+    # Popularity (normalized)
+    if item['source'] == 'YouTube':
+        score += min(item['views'] / 10000, 30)
+    elif item['source'] == 'Reddit':
+        score += min(item['score'] / 100, 30)
+    
+    # Source quality
+    verified = ['official', 'verified', 'docs']
+    if any(v in title_lower for v in verified):
+        score += 15
+    
+    # Duration preference (if user set)
+    if user_prefs and 'max_duration' in user_prefs:
+        if item.get('duration', 0) > user_prefs['max_duration']:
+            score -= 20
+    
+    return round(score, 2)
+```
+
+### 2.2 Auto-Summarization
+```python
+# processors/summarizer.py
+from collections import Counter
+import re
+
+def extract_summary(text, max_sentences=3):
+    sentences = re.split(r'[.!?]+', text)
+    return '. '.join(sentences[:max_sentences]).strip() + '.'
+
+def extract_keywords(results, top_n=10):
+    all_text = ' '.join(r['title'] + ' ' + r.get('description', '') 
+                        for r in results)
+    words = re.findall(r'\b[a-z]{4,}\b', all_text.lower())
+    
+    stopwords = {'with', 'that', 'this', 'from', 'have', 'your'}
+    filtered = [w for w in words if w not in stopwords]
+    
+    return [word for word, _ in Counter(filtered).most_common(top_n)]
+
+def generate_digest(results, query):
+    keywords = extract_keywords(results)
+    
+    digest = f"=== SEARCH DIGEST: {query} ===\n\n"
+    digest += f"Found {len(results)} results\n"
+    digest += f"Common themes: {', '.join(keywords[:5])}\n\n"
+    
+    # Top 3 by score
+    top_3 = sorted(results, key=lambda x: x['score'], reverse=True)[:3]
+    for i, item in enumerate(top_3, 1):
+        digest += f"{i}. [{item['source']}] {item['title']}\n"
+        digest += f"   {item['url']}\n"
+        digest += f"   {extract_summary(item.get('description', ''))}\n\n"
+    
+    return digest
+```
+
+---
+
+## PHASE 3: EXPORT FORMATS
+
+### 3.1 AI-Ready Bundle
+```python
+# exporters/bundle.py
+def export_ai_bundle(results, query, format='markdown'):
+    if format == 'markdown':
+        output = f"# Search Results: {query}\n\n"
+        output += f"**Query:** {query}\n"
+        output += f"**Sources:** {', '.join(set(r['source'] for r in results))}\n"
+        output += f"**Total Results:** {len(results)}\n\n"
+        
+        output += "## Top Results\n\n"
+        for r in results[:20]:
+            output += f"### {r['title']}\n"
+            output += f"- **Source:** {r['source']}\n"
+            output += f"- **URL:** {r['url']}\n"
+            output += f"- **Score:** {r['score']}\n"
+            output += f"- **Summary:** {extract_summary(r.get('description', ''))}\n\n"
+        
+        output += "## Keywords\n"
+        output += ', '.join(extract_keywords(results))
+        
+    elif format == 'json':
+        output = json.dumps({
+            'query': query,
+            'results': results,
+            'keywords': extract_keywords(results),
+            'timestamp': datetime.now().isoformat()
+        }, indent=2)
+    
+    save_path = f"{SHARE}/search_{sanitize(query)}_{timestamp()}.{format}"
+    write_file(save_path, output)
+    return save_path
+```
+
+### 3.2 Playlist Generator
+```python
+# exporters/playlist.py
+def export_playlist(results, name):
+    m3u = "#EXTM3U\n"
+    
+    video_results = [r for r in results if r['source'] == 'YouTube']
+    
+    for item in video_results:
+        m3u += f"#EXTINF:{item['duration']},{item['title']}\n"
+        m3u += f"{item['url']}\n"
+    
+    path = f"{SHARE}/playlist_{sanitize(name)}.m3u"
+    write_file(path, m3u)
+    return path
+```
+
+---
+
+## PHASE 4: USER INTERFACE (Wizard)
+
+### Wizard Flow
+```python
+# wizard.py
+def search_wizard():
+    dialog = xbmcgui.Dialog()
+    
+    # Step 1: Query
+    query = dialog.input("What are you searching for?")
+    if not query: return
+    
+    # Step 2: Sources
+    sources = dialog.multiselect("Search where?", [
+        "YouTube Videos",
+        "Reddit Discussions",
+        "GitHub Repos"
+    ])
+    if not sources: return
+    
+    # Step 3: Filters
+    filters = {}
+    filters['limit'] = dialog.numeric("Max results per source:", default=20)
+    
+    sort = dialog.select("Sort by:", [
+        "Best Match (scored)",
+        "Newest First",
+        "Most Popular"
+    ])
+    filters['sort'] = ['relevance', 'date', 'views'][sort]
+    
+    # Advanced filters (optional)
+    advanced = dialog.yesno("Fluid Search", "Configure advanced filters?")
+    if advanced:
+        filters['max_duration'] = dialog.numeric("Max video length (minutes):", default=30) * 60
+        filters['min_views'] = dialog.numeric("Minimum views:", default=100)
+        filters['date_range'] = dialog.select("Published within:", [
+            "Any time", "Last week", "Last month", "Last year"
+        ])
+    
+    # Step 4: Execute
+    dialog.notification("Fluid Search", f"Searching {len(sources)} sources...")
+    results = execute_search(query, sources, filters)
+    
+    # Step 5: Preview
+    preview = [f"[{r['score']:.0f}] {r['title']} ({r['source']})" 
+               for r in results[:10]]
+    selected = dialog.select(f"Found {len(results)} results - Top 10:", preview)
+    
+    # Step 6: Export options
+    action = dialog.select("What next?", [
+        "Export as AI Bundle (markdown)",
+        "Create Playlist (videos only)",
+        "Save to Fluid Bucket",
+        "View Full Report",
+        "Refine Search"
+    ])
+    
+    handle_action(action, results, query)
+```
+
+---
+
+## PHASE 5: ADVANCED FEATURES
+
+### 5.1 Smart Search (Recurring)
+```python
+# service.py integration
+class SmartSearch:
+    def __init__(self, query, filters, schedule='weekly'):
+        self.query = query
+        self.filters = filters
+        self.schedule = schedule
+        self.last_run = None
+        self.seen_urls = set()
+    
+    def run(self):
+        results = execute_search(self.query, self.filters)
+        new = [r for r in results if r['url'] not in self.seen_urls]
+        
+        if new:
+            notify(f"Fluid Search: {len(new)} new results for '{self.query}'")
+            export_ai_bundle(new, f"{self.query}_new")
+            self.seen_urls.update(r['url'] for r in new)
+        
+        self.last_run = datetime.now()
+```
+
+### 5.2 Cross-Reference Detection
+```python
+def find_cross_references(results):
+    youtube = [r for r in results if r['source'] == 'YouTube']
+    reddit = [r for r in results if r['source'] == 'Reddit']
+    
+    matches = []
+    for yt in youtube:
+        for rd in reddit:
+            # Check if Reddit discusses this video
+            if yt['url'] in rd.get('description', ''):
+                matches.append({
+                    'video': yt,
+                    'discussion': rd,
+                    'type': 'direct_link'
+                })
+            # Or similar title
+            elif fuzz.ratio(yt['title'], rd['title']) > 70:
+                matches.append({
+                    'video': yt,
+                    'discussion': rd,
+                    'type': 'similar_topic'
+                })
+    
+    return matches
+```
+
+---
+
+## USE CASES & EXAMPLES
+
+### Use Case 1: Tutorial Research
+```
+Query: "kodi addon development python"
+Sources: YouTube + Reddit
+Filters: Videos <30min, Published last year
+Output: AI Bundle with:
+  - 5 YouTube tutorials (scored by views + recency)
+  - 3 Reddit threads with code examples
+  - Cross-ref: "Reddit discusses video #2"
+  - Keywords: xbmc, dialog, service, routing
+  
+Action: Export → Give to Claude for curriculum creation
+```
+
+### Use Case 2: Content Discovery
+```
+Query: "documentary ancient rome"
+Sources: YouTube + Vimeo
+Filters: Min 45min duration, HD quality
+Output: Playlist (M3U) with 10 documentaries
+Action: Import to Fluid bucket "History_Docs"
+```
+
+### Use Case 3: Trend Tracking
+```
+Smart Search: "python asyncio performance"
+Schedule: Weekly
+Output: Digest of new articles/videos
+  Week 1: 3 new results
+  Week 2: 1 new (GitHub repo with benchmarks)
+Action: Auto-export to share/trends/
+```
+
+### Use Case 4: Problem Solving
+```
+Query: "kodi service.py crashes on startup"
+Sources: Reddit + GitHub issues
+Output: 
+  - 12 relevant threads
+  - Common solution: "Use xbmc.Monitor().waitForAbort()"
+  - 3 code snippets extracted
+Action: Bundle → Ask AI to synthesize fix
+```
+
+---
+
+## PRESENTATION OPTIONS
+
+### Option A: List View (Default)
+```
+╔════════════════════════════════════════╗
+║ SEARCH: kodi addon development         ║
+╠════════════════════════════════════════╣
+║ [92] Python Addon Tutorial - YouTube  ║
+║ [88] r/Addons4Kodi Best Practices     ║
+║ [85] xbmc.Dialog() Guide - YouTube    ║
+║ ...                                    ║
+╚════════════════════════════════════════╝
+[Actions: Export | Refine | Play | Save]
+```
+
+### Option B: Card View (Visual)
+```
+┌─────────────────────────┐
+│ [YouTube] 92/100        │
+│ Python Addon Tutorial   │
+│ ─────────────────────── │
+│ 15K views | 18:32       │
+│ 2 months ago            │
+│ [Play] [Add] [Details]  │
+└─────────────────────────┘
+```
+
+### Option C: Digest (Text)
+```
+=== DIGEST: kodi addon development ===
+
+Found 47 results across 2 sources
+Trending: xbmc, dialog, service, routing, storage
+
+TOP PICKS:
+1. [YouTube] Complete Kodi Addon Course
+   Perfect for beginners, covers routing + UI
+   
+2. [Reddit] Official addon guidelines thread
+   Community best practices + pitfalls
+
+3. [YouTube] Advanced: Background services
+   Handles service.py architecture
+```
+
+---
+
+## IMPROVEMENTS & SUGGESTIONS
+
+### 1. Source Expansion (Scraping-friendly)
+- **Archive.org**: Public domain content, no auth
+- **PeerTube**: Decentralized, public API
+- **Odysee/LBRY**: Alt video platform, JSON API
+- **HackerNews**: Tech discussions (public)
+- **StackOverflow**: Code Q&A via API
+
+### 2. Metadata Enrichment
+- Extract transcripts (YouTube captions via yt-dlp)
+- Parse code snippets from Reddit/GitHub
+- Detect language/framework from titles
+- Extract timestamps for "key moments"
+
+### 3. Smart Caching
+```python
+# cache.py using sqlite-utils
+from sqlite_utils import Database
+
+db = Database("search_cache.db")
+db["results"].enable_fts(["title", "description"])
+
+def cached_search(query, max_age_hours=24):
+    cached = db.execute("""
+        SELECT * FROM results 
+        WHERE query = ? AND timestamp > datetime('now', '-{} hours')
+    """, [query, max_age_hours]).fetchall()
+    
+    if cached: return cached
+    # Else: fresh search + cache
+```
+
+### 4. User Learning
+```python
+def track_interaction(result_id, action):
+    # action: 'played', 'saved', 'ignored'
+    db["interactions"].insert({
+        'result_id': result_id,
+        'action': action,
+        'timestamp': datetime.now()
+    })
+
+def personalized_score(result):
+    # Boost sources user prefers
+    if user_prefers_youtube(): result['score'] += 10
+    # Penalize durations user skips
+    if result['duration'] > user_avg_watch_time():
+        result['score'] -= 5
+```
+
+### 5. Batch Operations
+- "Compare these 3 search queries" (side-by-side results)
+- "Search history export" (all past searches → CSV)
+- "Trending now" (aggregate popular across sources)
+
+---
+
+## IMPLEMENTATION ROADMAP
+
+**Week 1: Core**
+- YouTube + Reddit extractors
+- Basic scoring
+- Deduplication
+
+**Week 2: Processing**
+- Advanced scoring
+- Summarization
+- Keyword extraction
+
+**Week 3: UI**
+- Wizard flow
+- Preview screens
+- Export options
+
+**Week 4: Polish**
+- Caching
+- Smart search
+- Cross-references
+
+---
+
+## DEPENDENCIES
+
+```
+# requirements.txt
+yt-dlp==2024.1.0
+praw==7.7.1
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.21.1
+beautifulsoup4==4.12.0
+requests==2.31.0
+sqlite-utils==3.35
+```
+
+**Install:** `pip install -r requirements.txt --break-system-packages`
+
+---
+
+## FILE STRUCTURE
+
+```
+plugin.program.fluid/
+└── resources/
+    └── lib/
+        └── search/
+            ├── __init__.py
+            ├── wizard.py
+            ├── search_engine.py
+            ├── extractors/
+            │   ├── youtube.py
+            │   ├── reddit.py
+            │   └── addon.py
+            ├── processors/
+            │   ├── scoring.py
+            │   ├── deduper.py
+            │   └── summarizer.py
+            ├── exporters/
+            │   ├── bundle.py
+            │   ├── playlist.py
+            │   └── bucket.py
+            └── cache.py
+```
+
+---
+
+# BONUS: STANDALONE ADDON TREE
+
+```
+plugin.program.fluidmedia/
+├── addon.xml
+├── fanart.jpg
+├── icon.png
+├── LICENSE.txt
+├── README.md
+└── resources/
+    ├── settings.xml
+    ├── language/
+    │   └── resource.language.en_gb/
+    │       └── strings.po
+    └── lib/
+        ├── default.py          # Entry point
+        ├── wizard.py           # UI
+        ├── search_engine.py    # Core
+        ├── extractors/
+        ├── processors/
+        ├── exporters/
+        └── cache.py
+
+addon.xml:
+<addon id="plugin.program.fluidmedia"
+       name="Fluid Media Search"
+       version="1.0.0"
+       provider-name="EricTiemes">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+    <import addon="script.module.praw"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="resources/lib/default.py">
+    <provides>executable</provides>
+  </extension>
+</addon>
+```

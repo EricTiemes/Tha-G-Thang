@@ -1,0 +1,18 @@
+{
+        "id": "deps_quickstart",
+        "name": "Quick Dependency Check",
+        "description": "Fast dependency and import analysis",
+        "version": "1.0",
+        "module": "dependency_mapper",
+        "target_files": ["addon.xml", "*.py"],
+        "filters": {
+            "check_xml_deps": True,
+            "check_imports": True,
+            "flag_unofficial": True
+        },
+        "delivery_format": "ai_handoff",
+        "options": {
+            "max_files": 10,
+            "check_versions": False
+        }
+    }

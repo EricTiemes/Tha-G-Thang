@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="General">
+        <setting label="Max Files to Scan" type="number" id="max_scan_files" default="100" />
+        <setting label="Deep Analysis" type="bool" id="deep_analysis" default="true" />
+        <setting label="Include System Addons" type="bool" id="include_system" default="false" />
+    </category>
+    
+    <category label="Analysis">
+        <setting label="AST Extraction Depth" type="select" id="ast_depth" values="shallow|medium|deep" default="medium" />
+        <setting label="Auto-save Reports" type="bool" id="auto_save" default="true" />
+        <setting label="Report Format" type="select" id="report_format" values="text|json|markdown|html" default="markdown" />
+    </category>
+    
+    <category label="Paths">
+        <setting label="Addons Directory" type="folder" id="addons_path" default="special://home/addons" />
+        <setting label="Output Directory" type="folder" id="output_path" default="special://profile/addon_data/plugin.program.fluiddev" />
+        <setting label="Templates Directory" type="folder" id="templates_path" default="special://home/addons/plugin.program.fluiddev/resources/templates" visible="false" />
+    </category>
+    
+    <category label="Module Manager">
+        <setting label="Enable Pattern Extractor" type="bool" id="module_pattern_extractor_enabled" default="true" />
+        <setting label="Enable Hook Tracer" type="bool" id="module_hook_tracer_enabled" default="true" />
+        <setting label="Enable Code Cleaner" type="bool" id="module_code_cleaner_enabled" default="true" />
+        <setting label="Enable Code Bundler" type="bool" id="module_code_bundler_enabled" default="true" />
+        <setting label="Enable Structure Analyzer" type="bool" id="module_structure_analyzer_enabled" default="true" />
+        <setting label="Enable Dependency Mapper" type="bool" id="module_dependency_mapper_enabled" default="true" />
+        <setting label="Enable Linter" type="bool" id="module_linter_enabled" default="true" />
+    </category>
+    
+    <category label="Code Cleaning">
+        <setting label="Auto-clean Extracted Code" type="bool" id="auto_clean" default="true" />
+        <setting label="Remove Hardcoded Paths" type="bool" id="clean_paths" default="true" />
+        <setting label="Generalize Variable Names" type="bool" id="generalize_vars" default="true" />
+        <setting label="Strip Addon-Specific Comments" type="bool" id="clean_comments" default="true" />
+    </category>
+    
+    <category label="Reports & Export">
+        <setting label="Generate AI Handoff" type="bool" id="auto_handoff" default="true" />
+        <setting label="Include Code Snippets" type="bool" id="include_snippets" default="true" />
+        <setting label="Include Metrics" type="bool" id="include_metrics" default="true" />
+    </category>
+    
+    <category label="Development">
+        <setting label="Acode Export Path" type="text" id="acode_export_path" default="/storage/emulated/0/Download/FluidDevExports" />
+        <setting label="Debug Mode" type="bool" id="debug_mode" default="false" />
+        <setting label="Verbose Logging" type="bool" id="verbose_log" default="false" />
+    </category>
+</settings>

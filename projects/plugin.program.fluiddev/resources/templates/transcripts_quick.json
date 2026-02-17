@@ -1,0 +1,19 @@
+{
+    "id": "transcripts_quick",
+    "name": "Transcripts - Quick",
+    "description": "Download all transcripts from playlist",
+    "version": "1.0",
+    "module": "youtube_transcripts",
+    "mode": "quick",
+    "options": {
+        "generate_summaries": true,
+        "include_timestamps": true
+    },
+    "output": "{downloads}/transcripts/",
+    "confirm": true,
+    "show_estimates": true, 
+        "format": "txt",
+    "confirm": true,
+        "show_notification": true
+    }
+}

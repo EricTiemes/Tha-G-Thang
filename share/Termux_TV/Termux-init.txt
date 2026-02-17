@@ -1,0 +1,28 @@
+Hier is een compact script voor je Termux-installatie op een TV Box, geoptimaliseerd voor jouw behoeften (coding, audio, netwerk).
+# 1. Update Termux
+pkg update && pkg upgrade -y
+
+# 2. Systeem & UI (Grotere fonts & Interface)
+pkg install termux-styling termux-api -y
+
+# 3. Verbinding & Netwerk (Telefoon, Home Network, SSH)
+pkg install openssh rsync nmap termux-auth termux-services -y
+
+# 4. Coding & Tools (Nodig bovenop wat je al hebt)
+pkg install build-essential golang rust python-pip nodejs-lts git -y
+
+# 5. Audio & Media
+pkg install pulseaudio mpv libsoxr -y
+
+# 6. Grotere fonts instellen (Basis commando)
+termux-reload-settings
+
+Belangrijke toevoegingen voor je setup:
+ * Groter Font: Aangezien je een TV Box gebruikt, kun je het font vergroten door in Termux de Volume Up toets ingedrukt te houden en op + te drukken, of door de ~/.termux/termux.properties aan te passen.
+ * Ollama UI: Om Ollama straks via Firefox te benaderen, moet je zorgen dat de OLLAMA_HOST op 0.0.0.0 staat, zodat hij bereikbaar is binnen je thuisnetwerk.
+ * Audio: pulseaudio is essentieel om geluid van Termux naar de Android-laag van je TV Box te sturen.
+Python setup (Pip):
+pip install --upgrade pip
+
+Verbinding met telefoon:
+Gebruik ssh-keygen op je TV Box en voeg de key toe aan je telefoon om makkelijk (zonder wachtwoord) bestanden te versturen via rsync of scp.

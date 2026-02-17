@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.program.fluiddev" name="[COLOR goldenrod]Fluid[/COLOR]-Dev"
+version="1.0.4c" provider-name="Tha [COLOR goldenrod]G[/COLOR] Thang">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+        <import addon="script.module.requests" optional="true"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">FluidDev - Dynamic Research &amp; Code Extraction Platform</summary>
+        <description lang="en_GB">Advanced modular research platform for Kodi addon development. Features: Dynamic module discovery with enable/disable, Environment abstraction (Kodi/Dev), Template registry with 30+ templates, AST-based pattern extraction, Execution flow tracing, Code generalization &amp; cleaning, Reusable bundle generation, AI-style handoff reports, Interactive template wizard, Side-by-side addon comparison. Modules auto-discover from filesystem - add new modules without code changes.</description>
+        <news>v1.1.0 - Major Architecture Overhaul
+- NEW: Dynamic module discovery - modules auto-detected from filesystem
+- NEW: Environment abstraction layer - clean Kodi/Dev separation
+- NEW: Template registry system - unified template management
+- NEW: Module manager - enable/disable modules on the fly
+- NEW: Interactive template wizard
+- IMPROVED: Blind entry router - zero logic, pure routing
+- IMPROVED: Config handles all environment differences
+- IMPROVED: Main menu dynamically builds from enabled modules
+- FIXED: Proper vfs abstraction for cross-environment compatibility</news>
+        <platform>all</platform>
+        <license>GPL-3.0</license>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+        </assets>
+    </extension>
+</addon>

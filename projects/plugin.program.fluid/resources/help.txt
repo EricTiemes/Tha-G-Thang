@@ -1,0 +1,293 @@
+================================================================================
+  FLUID — User Guide
+  Flexible Lightweight Universal Downloader
+================================================================================
+
+WHAT FLUID IS FOR
+-----------------
+FLUID is for the content Kodi doesn't scrape or organise automatically:
+
+  - YouTube clips, compilations, shorts
+  - Stand-up comedy specials
+  - Music video clips
+  - Personal downloaded, discrete, content
+  - Documentaries
+  - Anything you want to keep, sort, and find your own way
+
+FLUID does not replace Kodi's library. For movies, TV shows, episodes, and
+music — let Kodi do that. FLUID fills the gaps.
+
+
+--------------------------------------------------------------------------------
+FIRST RUN
+--------------------------------------------------------------------------------
+On first launch FLUID shows a 3-step setup wizard:
+
+  Step 1  Choose your mode — Simple, Advanced, or Pro
+  Step 2  Pick a download folder
+  Step 3  Set up auto-delivery (Simple) or get pointed to delivery rules
+
+You can re-run the wizard any time from Settings > General > Re-run setup wizard.
+
+
+--------------------------------------------------------------------------------
+SETTINGS MODES
+--------------------------------------------------------------------------------
+Simple
+  One tap to download. Quality, path, done. No decisions required.
+
+Advanced
+  Control quality per download, choose delivery destinations, enable privacy
+  options, configure context menu items, set up keyword-based routing.
+
+Pro
+  Everything in Advanced plus resume/retry, dry-run mode, debug logging,
+  connection profiles, and future encryption options.
+
+You can switch modes any time. Settings from higher modes are remembered
+when you step back down.
+
+
+--------------------------------------------------------------------------------
+HOW TO DOWNLOAD
+--------------------------------------------------------------------------------
+Right-click (long press) any playing or highlighted video — FLUID appears
+in the context menu on any playable item, not just library items.
+
+  Quick Download      Uses your defaults. No dialogs. Just goes.
+  Download with Options   Choose quality, privacy mode per-download.
+  Add to Favorites    Save the URL to a bucket for later.
+  Find Extras         Fetch transcript or extra thumbnails.
+
+The context menu only shows items you've enabled in Settings > Advanced.
+Maximum 4 items. If only one is enabled it fires directly — no menu shown.
+
+
+--------------------------------------------------------------------------------
+DOWNLOAD MODES
+--------------------------------------------------------------------------------
+Background (default)
+  Tap once, notification confirms queued. FLUID downloads in the background
+  while you keep watching. One download at a time — no strain on the device.
+
+Manual
+  Progress dialog shown. You watch it complete before continuing.
+
+Background mode flow:
+  Queued  -->  Service picks up (within 30 seconds)
+          -->  Downloads via yt-dlp
+          -->  Delivery queued automatically
+          -->  Delivered to your configured destinations
+
+
+--------------------------------------------------------------------------------
+DELIVERY — WHERE FILES GO
+--------------------------------------------------------------------------------
+FLUID can route files to different folders automatically based on keywords
+in the video title.
+
+Example rules (you set these in Settings > Delivery Paths):
+
+  Rule "Standup"    keywords: standup, comedy, comedian
+                    path: /storage/Videos/Standup/
+
+  Rule "Music"      keywords: music video, official video, vevo
+                    path: /storage/Videos/MusicVideos/
+
+If no rule matches, the file goes to your default download folder.
+
+You can have multiple destination paths per rule — FLUID uses the first
+one it can reach (useful for local + remote backup).
+
+Delivery modes (Advanced):
+  Background    Delivered automatically after download, no notification
+  Manual        Asks "Deliver now?" when download completes
+  Ask           Shows destination picker every time
+
+
+--------------------------------------------------------------------------------
+FAVORITES & BUCKETS
+--------------------------------------------------------------------------------
+Buckets are your personal categories. You create them — FLUID suggests
+them based on your own names.
+
+Create a bucket: Favorites > New Category
+
+When you Add to Favorites from the context menu, FLUID always asks which
+bucket. It learns your vocabulary — if you have a "Standup" bucket, videos
+with "standup" in the title will be suggested there automatically over time.
+
+Private buckets:
+  Mark a bucket as private and it gets a discrete display name (_, __, or
+  your custom label — set in Settings > Discrete Naming). Private bucket
+  names are never used as classification keywords.
+
+Export a bucket:
+  Favorites > Export — choose M3U (playlist), STRM files, or JSON backup.
+
+
+--------------------------------------------------------------------------------
+PLAYLISTS
+--------------------------------------------------------------------------------
+FLUID builds M3U playlists from your local folders, WebDAV/SMB paths,
+and favorites buckets — combined in any mix.
+
+Creating a playlist profile:
+  Playlists > New Profile
+
+  1. Name the profile
+  2. Add folders (local browse, or type davs:// smb:// paths)
+  3. Optionally add favorites buckets
+  4. Set priority keywords — matching titles appear at the top
+  5. Choose whether to prepend the parent folder name to each title
+
+Priority keywords (example: "New, Fresh") push those files to the top.
+Everything else sorts newest-first by file date.
+
+Profiles can be enabled/disabled. "Update All" regenerates only enabled ones.
+
+STRM export:
+  Export any favorites bucket as individual .strm files into a folder.
+  Kodi can browse and play these directly.
+
+Saved playlists go to: special://profile/playlists/videos/
+
+
+--------------------------------------------------------------------------------
+INTELLIGENCE — HOW FLUID LEARNS YOUR HABITS
+--------------------------------------------------------------------------------
+FLUID does not use AI. It uses your own vocabulary.
+
+When you create a bucket called "Standup" — that word becomes a keyword.
+When your delivery rule is named "Music" with keywords "music video, vevo" —
+those feed the same system.
+
+On every download and favorite-add, FLUID checks the video title and any
+YouTube tags/categories against your vocabulary and suggests the right
+bucket or delivery destination.
+
+The more buckets and rules you create, the smarter the suggestions get.
+You are the training data.
+
+YouTube metadata saved with each download:
+  Channel name and ID, publish date, duration, view count, tags,
+  YouTube categories, description (first 300 chars), playlist name.
+
+This is saved silently in the background. It powers future sorting —
+by publish date, by channel, by popularity — without you doing anything now.
+
+
+--------------------------------------------------------------------------------
+PRIVACY OPTIONS (Advanced/Pro)
+--------------------------------------------------------------------------------
+Timestamp filenames
+  Instead of "Comedian_Name_Live_Special.mp4" the file is saved as
+  "1708123456.mp4" — timestamp only, no title information in the name.
+
+Strip metadata
+  Removes embedded tags and EXIF data from the file after download.
+
+Private buckets
+  Discrete display names. Never appear in folder paths.
+
+Minimal metadata storage
+  Only URL and video ID stored in the database — no title, no thumbnail.
+
+These options can be combined. In Pro mode you can set them as defaults;
+in Advanced mode you are asked per-download.
+
+
+--------------------------------------------------------------------------------
+FOLDER ORGANISATION (Advanced)
+--------------------------------------------------------------------------------
+Enable "Organise into subfolders" in Advanced settings and downloads
+are automatically sorted into:
+
+  DownloadFolder / Source / Type /
+
+  Example:
+    /storage/Downloads/Youtube/Standup/Comedian_Special.mp4
+    /storage/Downloads/Youtube/MusicVideos/Artist_Video.mp4
+
+Source = platform (Youtube, Vimeo, Twitch...)
+Type   = matched from your delivery rules and bucket names
+
+Disable this to keep everything flat in one folder.
+
+
+--------------------------------------------------------------------------------
+BACKGROUND SERVICE
+--------------------------------------------------------------------------------
+FLUID runs a lightweight background service that:
+
+  Every 30 seconds   Processes the download queue (one at a time)
+                     Processes the delivery queue
+  Every hour         Cleans up old completed records from the database
+  Continuously       Watches for URLs shared from Android apps (if enabled)
+
+The service starts with Kodi and stops when Kodi stops. It does not run
+when Kodi is closed.
+
+
+--------------------------------------------------------------------------------
+ANDROID — SHARE FROM OTHER APPS
+--------------------------------------------------------------------------------
+Enable "Android share receiver" in Advanced settings.
+
+Once enabled, FLUID appears in the Android share sheet when you share a
+video URL from YouTube, browsers, or other apps. The URL is picked up by
+the background service and queued for download automatically.
+
+Termux fallback: if yt-dlp is not available inside Kodi, FLUID can hand
+off downloads to Termux (requires Termux installed with yt-dlp).
+
+
+--------------------------------------------------------------------------------
+FILE STRUCTURE AT A GLANCE
+--------------------------------------------------------------------------------
+  addon.xml           Addon manifest
+  default.py          Entry point
+  service.py          Background service
+  context.py          Right-click menu
+
+  core/
+    config.py         All settings
+    database.py       Local SQLite storage
+    intelligence.py   Pattern matching, classification
+    cleaner.py        Text and file cleaning
+    kodi_utils.py     Kodi UI helpers, themes
+    router.py         URL dispatcher
+    logger.py         Logging
+
+  modules/
+    downloader/       yt-dlp engine, quality presets, Termux fallback
+    delivery/         Keyword routing, copy/move, remote delivery
+    favorites/        Buckets, import/export, smart lists
+    playlist/         M3U builder, profiles, STRM export
+    meta/             Transcript fetch, extra thumbnails
+
+
+--------------------------------------------------------------------------------
+THEMES
+--------------------------------------------------------------------------------
+Default     Standard Kodi dark theme
+Chocolate   Dark brown background, cream text — easier on the eyes
+
+Switch in Settings > General > Theme.
+
+
+--------------------------------------------------------------------------------
+TIPS
+--------------------------------------------------------------------------------
+- Start in Simple mode. Upgrade to Advanced when you want more control.
+- Create your buckets before downloading — FLUID will start suggesting them.
+- Name your delivery rules clearly — the name becomes a classification keyword.
+- Use WebDAV paths (davs://) to deliver directly to a NAS or cloud drive.
+- Private content: set discrete naming templates before creating private buckets.
+- The queue manager (main menu > Queue Manager) shows the last 50 downloads
+  with status icons: queued, downloading, complete, failed.
+
+
+================================================================================
+  FLUID — end of guide
+================================================================================

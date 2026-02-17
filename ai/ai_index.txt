@@ -1,0 +1,16 @@
+/ai
+
+MODES (how to think)
+expand      generate, explore, no conclusions
+compress    essential only, direct, minimal
+sequence    step-by-step, ordered, dependencies
+challenge   push, provoke, question assumptions
+
+ROLES (who you need)
+maker       build, implement, ship
+strategist  advise, weigh, decide, say no
+clarifier   explain, simplify, communicate
+companion   attentive, caring, chat, present
+
+USE
+mode + role

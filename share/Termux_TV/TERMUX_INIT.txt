@@ -1,0 +1,57 @@
+Hier is de compacte handleiding voor de configuratie van je TV Box.
+1. UI & Groter Font (Globaal)
+Omdat je geen volumeknoppen hebt, dwingen we een groter font en extra toetsen af via de configuratie:
+mkdir -p ~/.termux
+# Font op 24 en extra toetsenbordbalk toevoegen
+echo "font-size = 24" > ~/.termux/termux.properties
+echo "extra-keys = [['ESC','/','-','HOME','UP','END','PGUP'],['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]" >> ~/.termux/termux.properties
+termux-reload-settings
+
+2. SSH Keys & Verbindingen
+Maak één sleutel aan voor al je verbindingen (Telefoon, HiDrive, GitHub):
+# Genereer key (druk overal op enter)
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
+
+# 1. Naar Telefoon:
+ssh-copy-id -p 8022 [telefoon_ip]
+
+# 2. Naar GitHub:
+cat ~/.ssh/id_ed25519.pub
+# Kopieer de output naar GitHub Settings -> SSH keys
+
+# 3. Naar HiDrive (Stratos):
+# Gebruik rsync om je key te uploaden of voeg handmatig toe via hun webpanel.
+
+3. Firefox & Audio/Mic Setup
+Om het toetsenbord te blokkeren en audio/mic te gebruiken voor Gemini/Ollama:
+ * Toetsenbord: Gebruik de Android instellingen van de TV Box om de "On-screen keyboard" uit te schakelen wanneer een fysiek/virtueel device verbonden is.
+ * Audio inschakelen: Nodig voor geluid via de TV:
+   pulseaudio --start --exit-idle-time=-1
+
+ * Mic via Phone: Gebruik de Termux:API om audio op te vangen via de gekoppelde telefooninterface:
+   pkg install termux-api -y
+# Start opname
+termux-microphone-record -f chat.mp3
+
+4. Useful Scripts (Fzf & Specialist Menu)
+Gecombineerd script om je AI-specialisten te beheren met een menu:
+# Installatie benodigdheden
+pkg install fzf yq jq -y
+
+# Maak het chat-menu script
+nano ~/chat.sh
+
+Inhoud van chat.sh:
+#!/usr/bin/env bash
+# Selecteer specialist -> start Ollama
+DIR="$HOME/Tha-G-Thang/ai/specialists"
+file=$(ls $DIR/*.yaml | fzf --prompt="🧠 Kies Specialist: ")
+prompt=$(yq '.system_prompt' "$file" | sed 's/^"//;s/"$//')
+
+clear
+echo "📁 Gebruikt: $file"
+ollama run qwen --system "$prompt"
+
+chmod +x ~/chat.sh
+
+Volgende stap: Zal ik de specifieke rclone configuratie voor je HiDrive-opslag uitschrijven?

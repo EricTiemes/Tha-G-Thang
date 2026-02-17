@@ -1,0 +1,46 @@
+# === PRIVATE – NEVER COMMIT ===
+# Local-only directories (project root level)
+/system/
+/vault/
+/sandro/
+/logs/
+/zips/
+
+# === Python ===
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+.ruff_cache/      
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# === Virtual environments ===
+.env
+.venv/
+venv/
+env/
+
+# === IDE / editors ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.project
+*.classpath
+
+# === OS junk ===
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# === Build artifacts (Kodi addon zips) ===
+# Already covered by /zips/ above, but keep specific if needed
+*.zip

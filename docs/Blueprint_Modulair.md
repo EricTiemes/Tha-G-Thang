@@ -1,0 +1,524 @@
+# FLUID Modular Architecture Blueprint v1.0
+
+## Core Principles
+
+### 1. Dependency Hierarchy (Strict One-Way Flow)
+```
+Root Entry Points (blind routers)
+    ↓ delegates to
+Modules (swappable features)
+    ↓ depends on
+Core Libraries (infrastructure/skills)
+    ↓ never imports from modules or entry points
+```
+
+**Rule**: Lower layers NEVER import from higher layers. This enables module deletion without cascade failures.
+
+---
+
+## Directory Structure
+
+```
+plugin.program.ADDON/
+│
+├── default.py  # Main menu entry (blind router)
+├── context.py  # Context menu entry (blind router)  
+├── service.py  # Background service (blind monitor)
+├── addon.xml               # Kodi registration
+│
+├── resources/
+│   ├── settings.xml        # Dashboard (controls everything)
+│   ├── language/           # Translations
+│   └── media/              # Icons, fanart
+│
+├── lib/
+│   ├── core/               # Infrastructure Layer
+│   │   ├── storage.py      # Data persistence engines
+│   │   ├── intelligence.py # Pattern matching/AI
+│   │   └── utils.py        # Shared tools
+│   │
+│   ├── display/            # UI Rendering Layer
+│   │   ├── renderer.py     # List/menu builders
+│   │   └── theme.py  # Visual enhancements
+│   │
+│   └─ modules/            # Feature Layer (all swappable)
+│       ├── feature_a/
+│       │   ├── __init__.py
+│       │   ├── manager.py
+│       │   └── models.py
+│       ├── feature_b/
+│       └── feature_c/
+```
+
+---
+
+## Layer Definitions
+
+### Layer 1: Root Entry Points (Blind Routers)
+**Purpose**: Kodi interaction boundary. Zero business logic.
+
+**Responsibilities**:
+- Receive Kodi events (menu open, context click, service tick)
+- Parse incoming parameters
+- Delegate to appropriate module
+- Handle catastrophic failures gracefully
+
+**Rules**:
+- ✅ Can import from `lib.core` (utils only)
+- ✅ Can import from `lib.modules` (to delegate)
+- ❌ Cannot contain business logic
+- ❌ Cannot directly manipulate data
+
+**Example Pattern**:
+```python
+# entry_main.py
+from lib.core.utils import parse_params
+from lib.modules import get_module_for_action
+
+action, params = parse_params(sys.argv)
+module = get_module_for_action(action)
+
+if module:
+    module.handle(action, params)
+else:
+    show_error("Feature disabled")
+```
+
+---
+
+### Layer 2: Resources (Dashboard)
+**Purpose**: Configuration center. User-facing controls.
+
+**Responsibilities**:
+- Define all configurable options
+- Enable/disable modules
+- Select storage engines
+- Control feature behavior
+
+**Rules**:
+- ✅ Controls what gets loaded at runtime
+- ✅ Can enable/disable entire modules
+- ❌ Never contains code (XML only)
+
+**Example Pattern**:
+```xml
+<!-- settings.xml -->
+<setting id="storage_engine" type="select" 
+         values="SQLite|JSON|MySQL" default="SQLite"/>
+
+<setting id="enable_feature_a" type="bool" default="true"/>
+<setting id="enable_feature_b" type="bool" default="false"/>
+
+<setting id="feature_a_version" type="select"
+         values="Stable|Experimental" default="Stable"
+         visible="eq(-2,true)"/>
+```
+
+---
+
+### Layer 3: Core Libraries (Infrastructure/Skills)
+**Purpose**: Reusable, stable, foundational capabilities.
+
+**Responsibilities**:
+- Provide abstract engines (storage, intelligence, theming)
+- Offer tool functions (logging, sanitizing, URL building)
+- Define interface contracts for modules to follow
+- NO feature-specific logic
+
+**Rules**:
+- ✅ Multiple implementations per engine (SQLite + JSON + MySQL)
+- ✅ Factory functions expose implementations
+- ✅ Can import from other core libraries
+- ❌ NEVER imports from modules or display layer
+- ❌ No Kodi UI calls (xbmcgui.Dialog, xbmcplugin)
+
+**Interface Contract Example**:
+```python
+# lib/core/storage.py
+
+class IStorageEngine:
+    """Contract all engines must fulfill"""
+    def save(self, table: str, data: dict) -> bool:
+        raise NotImplementedError
+    
+    def load(self, table: str, filters: dict) -> list:
+        raise NotImplementedError
+    
+    def delete(self, table: str, filters: dict) -> bool:
+        raise NotImplementedError
+
+class SQLiteEngine(IStorageEngine):
+    def save(self, table, data):
+        # SQLite-specific implementation
+        pass
+
+class JSONEngine(IStorageEngine):
+    def save(self, table, data):
+        # JSON file implementation
+        pass
+
+def get_storage(engine_type: str = None) -> IStorageEngine:
+    """Factory: returns engine based on settings or param"""
+    if not engine_type:
+        engine_type = xbmcaddon.Addon().getSetting('storage_engine')
+    
+    engines = {
+        'sqlite': SQLiteEngine,
+        'json': JSONEngine,
+        'mysql': MySQLEngine
+    }
+    return engines.get(engine_type, SQLiteEngine)()
+```
+
+---
+
+### Layer 4: Display (UI Rendering)
+**Purpose**: Translate data → Kodi UI elements (no business logic).
+
+**Responsibilities**:
+- Build ListItems with correct properties
+- Apply themes/colors
+- Render menus, lists, dialogs
+- Format text for display
+
+**Rules**:
+- ✅ Can import from `lib.core` (theme, utils)
+- ✅ Can call Kodi UI functions (xbmcplugin, xbmcgui)
+- ❌ Cannot import from modules (receives data as parameters)
+- ❌ No data manipulation (sorting/filtering done by modules)
+
+**Example Pattern**:
+```python
+# lib/display/renderer.py
+
+from lib.core.theme import get_theme
+
+def render_list(items: list, handle: int, apply_colors: bool = True):
+    """Generic list renderer"""
+    theme = get_theme()
+    
+    for idx, item in enumerate(items):
+        li = xbmcgui.ListItem(item['label'])
+        
+        if apply_colors:
+            color = theme.get_color(idx)
+            li.setLabel(f"[COLOR {color}]{item['label']}[/COLOR]")
+        
+        if item.get('thumb'):
+            li.setArt({'thumb': item['thumb']})
+        
+        xbmcplugin.addDirectoryItem(handle, item['url'], li, item['is_folder'])
+    
+    xbmcplugin.endOfDirectory(handle)
+```
+
+---
+
+### Layer 5: Modules (Features - All Swappable)
+**Purpose**: Self-contained business logic for specific features.
+
+**Responsibilities**:
+- Implement feature-specific workflows
+- Define data models for that feature
+- Validate inputs, process business rules
+- Coordinate between core libraries and display layer
+
+**Rules**:
+- ✅ Can import from `lib.core` (storage, intelligence, utils)
+- ✅ Can import from `lib.display` (to render results)
+- ✅ Can import from other modules (with caution - creates coupling)
+- ❌ NEVER imported by core libraries
+- ✅ Must declare dependencies explicitly
+- ✅ Must handle missing dependencies gracefully
+
+**Self-Containment Contract**:
+```python
+# lib/modules/feature_a/__init__.py
+
+"""
+FEATURE: Feature A Description
+VERSION: 1.2.0
+REQUIRES:
+    - core.storage: ['save', 'load', 'delete']
+    - core.intelligence: ['suggest']
+    - display.renderer: ['render_list']
+OPTIONAL:
+    - modules.feature_b: ['helper_function']
+EXPORTS:
+    - can_handle(action) -> bool
+    - handle(action, params) -> None
+"""
+
+ENABLED_SETTING = 'enable_feature_a'
+
+def can_handle(action: str) -> bool:
+    """Check if this module handles the action"""
+    return action in ['action_a1', 'action_a2', 'action_a3']
+
+def handle(action: str, params: dict):
+    """Execute the action"""
+    from .manager import FeatureAManager
+    mgr = FeatureAManager()
+    
+    if action == 'action_a1':
+        mgr.do_thing_1(params)
+    elif action == 'action_a2':
+        mgr.do_thing_2(params)
+```
+
+**Data Model Location**:
+```python
+# lib/modules/feature_a/models.py
+
+from dataclasses import dataclass
+
+@dataclass
+class FeatureAItem:
+    """Data structure specific to Feature A"""
+    field1: str
+    field2: int
+    # ... feature-specific fields
+```
+
+**Business Logic Location**:
+```python
+# lib/modules/feature_a/manager.py
+
+from lib.core.storage import get_storage
+from lib.core.intelligence import get_intelligence
+from lib.display.renderer import render_list
+from .models import FeatureAItem
+
+class FeatureAManager:
+    """All business logic for Feature A"""
+    
+    def __init__(self):
+        self.storage = get_storage()
+        self.intelligence = get_intelligence()
+    
+    def do_thing_1(self, params):
+        # Feature-specific workflow
+        data = self.storage.load('feature_a_table', {})
+        items = [FeatureAItem(**row) for row in data]
+        
+        # Process, validate, transform
+        processed = self._process(items)
+        
+        # Render
+        render_list(processed, params['handle'])
+    
+    def _process(self, items):
+        # Internal business logic
+        return [{'label': i.field1, 'url': i.field2} for i in items]
+```
+
+---
+
+## Module Loading Strategy
+
+### Option A: Static Registration
+```python
+# lib/modules/__init__.py
+
+AVAILABLE_MODULES = {
+    'feature_a': 'lib.modules.feature_a',
+    'feature_b': 'lib.modules.feature_b',
+    'feature_c': 'lib.modules.feature_c',
+}
+
+def get_module_for_action(action: str):
+    """Find which module handles this action"""
+    addon = xbmcaddon.Addon()
+    
+    for name, path in AVAILABLE_MODULES.items():
+        # Check if enabled in settings
+        if addon.getSetting(f'enable_{name}') != 'true':
+            continue
+        
+        # Import and check
+        try:
+            mod = importlib.import_module(path)
+            if mod.can_handle(action):
+                return mod
+        except ImportError:
+            log(f"Module {name} not found - skipping")
+    
+    return None
+```
+
+### Option B: Auto-Discovery
+```python
+# lib/modules/__init__.py
+
+def discover_modules():
+    """Auto-detect modules in lib/modules/"""
+    modules = []
+    modules_dir = os.path.join(os.path.dirname(__file__))
+    
+    for item in os.listdir(modules_dir):
+        path = os.path.join(modules_dir, item)
+        if os.path.isdir(path) and '__init__.py' in os.listdir(path):
+            try:
+                mod = importlib.import_module(f'.{item}', package='lib.modules')
+                if hasattr(mod, 'can_handle'):
+                    modules.append(mod)
+            except ImportError:
+                pass
+    
+    return modules
+```
+
+---
+
+## Swapping Mechanisms
+
+### 1. Swap Entire Module
+```bash
+# Disable current, enable alternative
+mv lib/modules/feature_a lib/modules/feature_a_old
+mv lib/modules/feature_a_new lib/modules/feature_a
+```
+
+### 2. Swap Implementation Within Module
+```python
+# lib/modules/feature_a/__init__.py
+
+from resources.settings import get_setting
+
+if get_setting('feature_a_version') == 'stable':
+    from .manager_stable import FeatureAManager
+else:
+    from .manager_experimental import FeatureAManager
+```
+
+### 3. Swap Core Engine
+```python
+# User changes setting: storage_engine = "mysql"
+# Next restart:
+
+from lib.core.storage import get_storage
+storage = get_storage()  # Returns MySQLEngine instead of SQLiteEngine
+
+# All modules work unchanged because they use the interface
+```
+
+---
+
+## Testing Module Independence
+
+### Deletion Test
+```bash
+# Can you delete a module without breaking others?
+rm -rf lib/modules/feature_b/
+
+# Start addon:
+# - feature_a still works ✅
+# - feature_c still works ✅  
+# - Only actions for feature_b show "disabled" ✅
+```
+
+### Dependency Test
+```python
+# Does the module declare dependencies correctly?
+
+# lib/modules/feature_a/__init__.py
+REQUIRES = {
+    'core': ['storage', 'intelligence'],
+    'display': ['renderer']
+}
+
+# On load, validate:
+for layer, items in REQUIRES.items():
+    for item in items:
+        try:
+            importlib.import_module(f'lib.{layer}.{item}')
+        except ImportError:
+            raise ModuleNotFoundError(f"{MODULE_NAME} requires {layer}.{item}")
+```
+
+---
+
+## Migration Path for Existing Addons
+
+### Phase 1: Non-Breaking (Create Structure)
+1. Create `lib/modules/` folder
+2. Copy current feature files → `lib/modules/feature_name/`
+3. Add `__init__.py` to each module
+4. Keep old imports working via `lib/__init__.py` redirects
+
+### Phase 2: Refactor Core
+1. Extract storage engines from monolithic file
+2. Create factory functions
+3. Update modules to use factories (one at a time)
+
+### Phase 3: Enable Swapping
+1. Add settings to enable/disable modules
+2. Create module loader in entry points
+3. Test deletion of non-critical modules
+
+### Phase 4: Cleanup
+1. Remove compatibility redirects
+2. Update all imports to new paths
+3. Document module interface contracts
+
+---
+
+## Success Criteria
+
+A properly modular addon achieves:
+
+✅ **Module Independence**: Delete any module → core + other modules still work  
+✅ **Engine Swapping**: Change storage engine → all modules adapt automatically  
+✅ **Version Mixing**: Run stable + experimental versions of same feature side-by-side  
+✅ **Clean Boundaries**: Clear rules about what imports what  
+✅ **Settings-Driven**: Enable/disable features without code changes  
+✅ **Graceful Degradation**: Missing optional dependency → feature disabled, not crash  
+✅ **Self-Documenting**: Each module declares requirements explicitly  
+
+---
+
+## Anti-Patterns to Avoid
+
+❌ **Circular Dependencies**
+```python
+# lib/core/storage.py imports lib/modules/feature_a
+# lib/modules/feature_a imports lib/core/storage
+# = Import deadlock
+```
+
+❌ **Hidden Coupling**
+```python
+# Module assumes another module exists
+from lib.modules.feature_b import helper  # Breaks if feature_b deleted
+```
+
+❌ **Direct Class Imports from Core**
+```python
+from lib.core.storage import SQLiteEngine  # Tight coupling
+storage = SQLiteEngine()  # Can't swap engines
+
+# Instead:
+from lib.core.storage import get_storage  # Loose coupling
+storage = get_storage()  # Engine selected by settings
+```
+
+❌ **Business Logic in Entry Points**
+```python
+# entry_main.py
+# ... 50 lines of data processing ...  # WRONG - belongs in module
+```
+
+❌ **Core Importing from Modules**
+```python
+# lib/core/utils.py
+from lib.modules.feature_a import something  # FORBIDDEN
+```
+
+---
+
+# End of Blueprint
+
+**Next Steps**:
+1. Research proven implementations (Composite Seren, Venom)
+2. Validate/refine this blueprint based on real-world patterns
+3. Apply to your specific addon (module-by-module migration)

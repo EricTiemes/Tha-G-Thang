@@ -1,0 +1,18 @@
+{
+    "id": "youtube_workflow",
+    "name": "Complete YouTube Workflow",
+    "description": "Search playlists → Download transcripts (full pipeline)",
+    "version": "1.0",
+    "module": "master",
+    "sequence": [
+        "youtube_search_quick",
+        "youtube_transcripts_quick"
+    ],
+    "delivery_format": "complete_package",
+    "options": {
+        "parallel": false,
+        "stop_on_error": true,
+        "auto_chain_output": true,
+        "generate_master_report": true
+    }
+}

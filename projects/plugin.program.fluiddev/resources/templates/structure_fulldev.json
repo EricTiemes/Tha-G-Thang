@@ -1,0 +1,33 @@
+{
+    "id": "structure_fulldev",
+    "name": "Structure Analysis - FullDev",
+    "description": "Comprehensive addon structure analysis with detailed configuration",
+    "version": "1.0",
+    "module": "structure_analyzer",
+    "mode": "fulldev",
+    "options": {
+        "analyze_entry_points": true,
+        "detect_frameworks": true,
+        "count_modules": true,
+        "classify_structure": true,
+        "scan_subdirectories": true,
+        "max_depth": null,
+        "include_file_sizes": true,
+        "analyze_imports": true,
+        "detect_circular_deps": false,
+        "generate_tree_view": true
+    },
+    "output": {
+        "format": "detailed",
+        "save_report": true,
+        "export_json": true,
+        "export_markdown": true,
+        "show_notification": true,
+        "include_recommendations": true
+    },
+    "advanced": {
+        "parallel_processing": false,
+        "cache_results": true,
+        "verbose_logging": true
+    }
+}

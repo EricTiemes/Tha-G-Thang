@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="plugin.program.fluid"
+       name="[COLOR goldenrod]FLUID[/COLOR]"
+       version="1.0.0c"
+       provider-name="Tha [COLOR goldenrod]G[/COLOR] Thang">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+        <import addon="script.module.requests" version="2.22.0"/>
+        <import addon="script.module.urllib3" version="1.25.0"/>
+    </requires>
+    
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    
+    <extension point="xbmc.service" library="service.py" start="startup"/>
+    
+    <extension point="kodi.context.item" library="context.py">
+        <item>
+            <label>[COLOR goldenrod]FLUID[/COLOR] Download</label>
+            <visible>String.IsEqual(ListItem.DBTYPE,video) | ListItem.IsPlayable,true)</visible>
+        </item>
+    </extension>
+    
+    <extension point="xbmc.addon.metadata">
+        <summary>Organize videos Kodi doesn't scrape</summary>
+        <description>FLUID manages videos outside Kodi's library: plugin streams, private content, and web clips. It learns from your habits.</description>
+        <platform>all</platform>
+        <license>GPL-2.0-or-later</license>
+        <source>https://github.com/Tha-G-Thang/plugin.video.fluid</source>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+        </assets>
+    </extension>
+</addon>

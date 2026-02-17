@@ -1,0 +1,20 @@
+{
+    "id": "deps_quick",
+    "name": "Dependency Mapping - Quick",
+    "description": "Fast dependency analysis with presets",
+    "version": "1.0",
+    "module": "dependency_mapper",
+    "mode": "quick",
+    "options": {
+        "scan_imports": true,
+        "detect_external_deps": true,
+        "check_kodi_modules": true,
+        "max_depth": 2,
+        "include_stdlib": false
+    },
+    "output": {
+        "format": "summary",
+        "save_report": true,
+        "show_notification": true
+    }
+}

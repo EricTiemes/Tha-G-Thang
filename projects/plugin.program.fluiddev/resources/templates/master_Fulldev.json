@@ -1,0 +1,21 @@
+{
+        "id": "master_fulldev",
+        "name": "Complete Dev Analysis",
+        "description": "Run all full analysis templates comprehensively",
+        "version": "1.0",
+        "module": "master",
+        "sequence": [
+            "structure_fulldev",
+            "deps_fulldev",
+            "pattern_fulldev",
+            "hooks_fulldev",
+            "clean_fulldev",
+            "bundle_fulldev"
+        ],
+        "delivery_format": "complete_package",
+        "options": {
+            "parallel": False,
+            "stop_on_error": False,
+            "generate_master_report": True
+        }
+    }

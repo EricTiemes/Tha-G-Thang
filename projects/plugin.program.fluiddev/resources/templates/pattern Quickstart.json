@@ -1,0 +1,20 @@
+{
+        "id": "pattern_quickstart",
+        "name": "Quick Pattern Find",
+        "description": "Fast pattern extraction for common development needs",
+        "version": "1.0",
+        "module": "pattern_extractor",
+        "target_files": ["*.py"],
+        "filters": {
+            "pattern_type": "name",
+            "pattern": "(download|play|resolve|router)",
+            "case_sensitive": False,
+            "max_results": 20
+        },
+        "delivery_format": "ai_handoff",
+        "options": {
+            "include_code": True,
+            "include_args": True,
+            "max_lines": 10
+        }
+    },

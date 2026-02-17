@@ -1,0 +1,133 @@
+Yes, absolutely. Now that your specialist library is ready, you can use Linux terminal skills to find, run, and combine scripts that use these specialists.
+
+---
+
+✅ Three levels of "finding useful scripts"
+
+1. Search your own device
+
+```bash
+find /storage/emulated/0 -name "*.sh" 2>/dev/null
+find ~ -name "*.py" 2>/dev/null
+grep -r "ollama" ~/ 2>/dev/null
+```
+
+What you'll find:
+
+· Old scripts you forgot about
+· Termux tools you installed
+· Ollama helpers others shared
+
+---
+
+2. Download from GitHub (Termux-optimized)
+
+```bash
+# Example: Ollama chat scripts
+git clone https://github.com/ggml-org/llama.cpp
+git clone https://github.com/termux/termux-packages
+```
+
+Then search inside:
+
+```bash
+find llama.cpp -name "*.sh" -o -name "*.py"
+```
+
+---
+
+3. Use curl to fetch single scripts from the web
+
+```bash
+# Example: A script to query your specialists
+curl -O https://raw.githubusercontent.com/user/repo/main/query_specialist.sh
+chmod +x query_specialist.sh
+```
+
+---
+
+🧠 What you should look for now
+
+Task Search for
+Query Ollama from terminal ollama chat script bash
+Batch process YAML files yaml parser bash or yq
+Build a simple menu termux dialog menu
+Send to API (OpenAI, Claude) curl api script
+Convert YAML to Markdown yaml to md converter
+Obsidian integration obsidian bash script
+
+Install tools that help:
+
+```bash
+pkg install jq yq fzf dialog
+```
+
+---
+
+🎯 My recommendation – start with this:
+
+```bash
+# Install fzf – fuzzy finder (amazing for menus)
+pkg install fzf
+
+# Create a script that lets you pick a specialist and chat with it
+nano ~/chat_with_specialist.sh
+```
+
+Simple idea:
+
+1. List all ~/Tha-G-Thang/ai/specialists/*.yaml
+2. Pick one with fzf
+3. Extract the system_prompt with yq
+4. Start an Ollama chat with that prompt
+
+That's your next project – and you already have all the pieces.
+
+✅ TODO1 – Chat with Specialists Script
+
+Goal: Select a specialist YAML file → extract system prompt → start Ollama chat.
+
+File: ~/Tha-G-Thang/scripts/chat.sh
+
+```bash
+#!/usr/bin/env bash
+
+SPECIALIST_DIR="$HOME/Tha-G-Thang/ai/specialists"
+MODEL="phi3:mini"
+
+# 1. Pick a specialist
+cd "$SPECIALIST_DIR" || exit 1
+file=$(ls *.yaml | fzf --prompt="🧠 Pick a specialist: ") || exit 1
+
+# 2. Extract system prompt
+prompt=$(yq '.system_prompt' "$file" | sed 's/^"//;s/"$//')
+
+# 3. Clear screen and start chat
+clear
+echo "📁 $file"
+echo "🧠 $MODEL"
+echo "────────────────────"
+echo ""
+
+# 4. Launch Ollama with system prompt
+ollama run "$MODEL" --system "$prompt"
+```
+
+---
+
+📦 Install dependencies:
+
+```bash
+pkg install fzf yq
+chmod +x ~/Tha-G-Thang/scripts/chat.sh
+```
+
+---
+
+🚀 Run it:
+
+```bash
+~/Tha-G-Thang/scripts/chat.sh
+```
+
+Done. ✅

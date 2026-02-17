@@ -1,0 +1,36 @@
+{
+    "id": "bundle_fulldev",
+    "name": "Code Bundling - FullDev",
+    "description": "Comprehensive code bundling with advanced packaging",
+    "version": "1.0",
+    "module": "code_bundler",
+    "mode": "fulldev",
+    "options": {
+        "bundle_resources": true,
+        "bundle_dependencies": true,
+        "bundle_media": true,
+        "bundle_language_files": true,
+        "minify_code": true,
+        "create_zip": true,
+        "include_addon_xml": true,
+        "include_changelog": true,
+        "include_license": true,
+        "strip_tests": true,
+        "optimize_images": false,
+        "generate_checksums": true
+    },
+    "output": {
+        "format": "detailed",
+        "save_report": true,
+        "show_notification": true,
+        "bundle_location": "output/",
+        "include_statistics": true,
+        "generate_manifest": true
+    },
+    "advanced": {
+        "parallel_processing": false,
+        "cache_results": true,
+        "verbose_logging": true,
+        "compression_level": 9
+    }
+}

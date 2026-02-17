@@ -1,0 +1,22 @@
+{
+    "id": "master_quick",
+    "name": "Complete Quick Analysis",
+    "description": "Run all analysis modules in quick mode with smart defaults",
+    "version": "1.0",
+    "module": "master",
+    "sequence": [
+        "structure_quick",
+        "deps_quick",
+        "pattern_quick",
+        "hooks_quick",
+        "lint_quick",
+        "clean_quick",
+        "bundle_quick"
+    ],
+    "delivery_format": "complete_package",
+    "options": {
+        "parallel": false,
+        "stop_on_error": false,
+        "generate_master_report": true
+    }
+}

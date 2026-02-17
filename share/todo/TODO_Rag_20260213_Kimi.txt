@@ -1,0 +1,604 @@
+Perfect. Clear decisions:
+
+1. Agent: `projects/personal-agent/` (fresh start, not reviving sandro)
+2. Paths: Already fixed locally - `system/modes/` is correct
+3. Vault split:
+   - `/vault/` = personal (your Obsidian)
+   - `/system/vault/` = AI-accessible (mirror/index)
+4. Privacy: `projects/personal-agent/` → add to `~/.gitignore` (private)
+
+Let me create the structure and files:
+
+Here's the complete file set. I've designed this to be immediately usable while staying flexible for your future RAG enhancements.
+
+---
+
+📁 File Contents (Ready to Copy)
+
+1. Core System (`system/core/`)
+
+`system/core/identity.yaml`:
+
+```yaml
+---
+project: "Tha G👑 Thang"
+user: "Developer"
+environment: "Android/Termux"
+primary_languages: ["Python", "Bash"]
+projects_path: "projects/"
+vault_path: "vault/"
+ai_vault_path: "system/vault/"
+---
+
+# AI Context: Core Identity
+
+You assist with Kodi addon development and personal workflow automation on Android/Termux.
+
+## User Preferences
+- Minimal output: delta-only patches, no fluff
+- Format: Python 3.x (PEP 8), Bash (POSIX where possible)
+- Configs: YAML preferred over JSON
+- Explanations: only when explicitly asked ("explain:")
+- No emoticons in technical contexts
+- No citations unless research mode
+
+## Environment Facts
+- Platform: Android + Termux
+- Python: python 3.11+
+- Tools: ruff, git, fzf, tree, yq
+- Storage: ~/storage/shared/ (external), ~/ (internal)
+- Projects: /projects/ (GitHub-synced)
+- Vault: /vault/ (personal Obsidian, private)
+- AI Vault: /system/vault/ (English, technical, AI-accessible)
+```
+
+`system/core/constraints.yaml`:
+
+```yaml
+---
+type: constraints
+enforce: strict
+---
+
+# Hard Constraints (Always Apply)
+
+## Output Rules
+- delta_only: true              # Touch only changed lines
+- no_emoticons: true            # In coding/technical contexts
+- minimal_comments: true        # Only non-obvious logic
+- no_citations: true            # No academic footnotes
+- touch_existing_code: "only_discussed_first"
+
+## Format Enforcement
+- code: "Python 3.x, PEP 8 compliant, type hints optional"
+- scripts: "Bash, POSIX-compatible, no bashisms unless necessary"
+- configs: "YAML 1.2, 2-space indent, comments for non-obvious"
+- paths: "Relative from repo root, never hardcode home"
+
+## Privacy Boundaries
+- /system/ : LOCAL ONLY, never GitHub
+- /vault/ : LOCAL ONLY, personal Obsidian
+- /projects/ : Public (GitHub) except personal-agent
+- /logs/, /zips/ : LOCAL ONLY
+- Never expose: internal paths, workflows, AI protocol details
+
+## Prohibited Actions
+- Do NOT modify unrelated code
+- Do NOT suggest exposing private paths in public files
+- Do NOT assume mode/scenario - detect or ask
+- Do NOT output full files unless explicitly requested
+```
+
+`system/core/env.yaml`:
+
+```yaml
+---
+type: environment
+detected: termux
+---
+
+# Environment Configuration
+
+## Termux Specifics
+- prefix: /data/data/com.termux/files/usr
+- home: ~ (internal storage)
+- external: ~/storage/shared/ (/sdcard/)
+- python: $(which python3)
+- pip: pip3 --user (avoid system packages)
+
+## Available Tools
+- ruff: linting (Python)
+- tree: directory visualization
+- fzf: fuzzy finder
+- yq: YAML processor
+- git: version control
+- zip: bundling
+
+## Project Paths
+- FLUID: projects/plugin.program.fluid/
+- FluidSnoop: projects/plugin.program.fluidsnoop/
+- Personal Agent: projects/personal-agent/ (private, gitignored)
+
+## Vault Paths
+- Personal: vault/ (Obsidian, Dutch content, private)
+- AI: system/vault/ (English, technical, AI-accessible)
+```
+
+---
+
+2. Lenses (`system/lenses/`)
+
+`system/lenses/code.yaml`:
+
+```yaml
+---
+type: lens
+name: code
+triggers: ["fix", "bug", "def ", "class ", "import ", "error", "refactor", "traceback", "debug", "python", "kodi"]
+priority: high
+---
+
+# Code Lens: Technical Implementation
+
+## Kodi Addon Patterns
+
+### Structure
+```
+
+addon.py / default.py → router → resources/lib/
+addon.xml → metadata & dependencies
+resources/settings.xml → user config
+
+```
+
+### Common APIs
+- Settings: `xbmcaddon.Addon().getSetting(id)`
+- Logging: `xbmc.log(msg, xbmc.LOGDEBUG)`
+- Dialogs: `xbmcgui.Dialog().ok(heading, message)`
+- Files: `xbmcvfs.exists(path)` (not os.path)
+
+### Termux/Python Specifics
+- Unicode: always encode/decode explicit (UTF-8)
+- Paths: use `os.path.join()`, never hardcode `/` or `\\`
+- Permissions: check `termux-setup-storage` for external
+- Modules: keep `lib/` flat, import with `from lib import x`
+
+### Debugging Checklist
+1. Check Kodi log: `~/.kodi/temp/kodi.log`
+2. Verify addon.xml version bumped
+3. Check Python syntax: `python -m py_compile addon.py`
+4. Test imports: `python -c "from lib import x"`
+5. Validate XML: `xmllint --noout addon.xml`
+```
+
+`system/lenses/design.yaml`:
+
+```yaml
+---
+type: lens
+name: design
+triggers: ["idea", "concept", "design", "structure", "brainstorm", "how might", "what if", "architecture", "pattern"]
+priority: medium
+---
+
+# Design Lens: Creative & Architecture Work
+
+## Brainstorming Framework
+
+### For New Features
+1. **Problem**: What user pain does this solve?
+2. **Constraints**: Kodi API limits, Termux sandbox, Android permissions
+3. **Alternatives**: Generate 3 approaches (minimal, balanced, ambitious)
+4. **Tradeoffs**: Complexity vs maintainability vs user value
+5. **Recommendation**: Pick one with clear rationale
+
+### For Architecture Decisions
+- **Modularity**: Can this component be removed without breaking others?
+- **Dependencies**: One-way flow (entry → module → core)
+- **Testability**: How to verify without full Kodi environment?
+- **Documentation**: What must be captured for future AI sessions?
+
+## Patterns Catalog
+
+### Decomposition Strategy
+- Break at natural boundaries (UI vs logic vs data)
+- Each module: single responsibility, clear interface
+- Avoid: circular imports, shared mutable state
+
+### Documentation Strategy
+- Code: docstrings for public APIs only
+- System: `/docs/` for architecture blueprints
+- Decisions: `/system/vault/` for ADRs (Architecture Decision Records)
+- Handoffs: `/share/handoffs/` for session continuity
+```
+
+`system/lenses/meta.yaml`:
+
+```yaml
+---
+type: lens
+name: meta
+triggers: ["continue", "handoff", "status", "summary", "last time", "where were we", "workflow", "process", "setup", "init"]
+priority: high
+---
+
+# Meta Lens: System & Continuity
+
+## Handoff Protocol
+
+### Reading Handoffs
+- Check `/share/handoffs/` for latest (ls -t)
+- Parse YAML frontmatter for status
+- Read body for context and next steps
+- Respect "BLOCKED" or "PENDING" states
+
+### Writing Handoffs
+- YAML frontmatter: date, status, next_tasks
+- Body: what was done, what was learned, what's next
+- Keep compact: 1 page max unless deep context needed
+
+## Workflow Integration
+
+### Script Usage
+- `qs.sh` → generate AI context (uses this lens system)
+- `scripts/lib/project_selector.sh` → pick project
+- `scripts/bridge.sh` → git operations
+- `scripts/bundle.sh` → create release zips
+
+### Context Assembly
+1. Load core (identity, constraints, env)
+2. Detect intent → load relevant lens(es)
+3. Retrieve recent handoffs (1 for standard, 3 for deep)
+4. Assemble into `/share/generated/context_[timestamp].md`
+```
+
+---
+
+3. Router (`system/router/`)
+
+`system/router/classifier.yaml`:
+
+```yaml
+---
+type: classifier
+version: 1.0
+---
+
+# Intent Classification Rules
+
+## Scoring System
+Multiple lenses can activate. Score > 1 triggers inclusion.
+
+### Code Signals (+2 each)
+- fix, bug, error, traceback, debug
+- def , class , import , return
+- refactor, optimize, lint, ruff
+- python, kodi, addon, xbmc
+
+### Design Signals (+2 each)
+- idea, concept, design, structure
+- brainstorm, architecture, pattern
+- how might, what if, consider
+
+### Meta Signals (+2 each)
+- continue, handoff, status, summary
+- last time, where were we
+- workflow, process, setup, init
+
+### Cross-Cutting (+1 each)
+- project, file, path, directory
+- create, build, make, generate
+
+## Default Behavior
+If no lens scores > 1: activate `code` (assume coding)
+If multiple lenses score > 1: load all (let AI sort priority)
+
+## Examples
+- "fix the bug in addon.py" → code (4 points)
+- "design a new feature" → design (3 points)
+- "how might we structure this" → design (3 points)
+- "continue where we left off" → meta (3 points)
+- "fix the bug and redesign the flow" → code + design (both load)
+```
+
+---
+
+4. AI Vault (`system/vault/`)
+
+`system/vault/README.md`:
+
+```markdown
+# AI Vault
+
+This directory contains **AI-accessible** notes derived from or related to `/vault/` (personal Obsidian).
+
+## Relationship to Personal Vault
+- `/vault/` = Your private Obsidian (Dutch, personal, never exposed)
+- `/system/vault/` = Technical notes, ADRs, project context (English, AI-readable)
+
+## Contents
+- `projects/` - Project-specific context (FLUID, FluidSnoop, personal-agent)
+- `adrs/` - Architecture Decision Records
+- `patterns/` - Reusable solutions and patterns
+- `research/` - Technical research summaries
+
+## Sync Strategy
+- Manual: You copy/adapt from personal vault when relevant
+- Automated: Future `vault_bridge.sh` may suggest connections
+- Privacy: Never auto-sync personal content without explicit review
+```
+
+`system/vault/projects/personal-agent.md`:
+
+```yaml
+---
+type: project
+status: planning
+location: projects/personal-agent/
+privacy: private
+---
+
+# Project: Personal Agent
+
+## Overview
+Experimental AI agent built as personal learning project. Not part of core RAG infrastructure.
+
+## Goals
+- Learn agent architecture by building one
+- Experiment with local LLM integration
+- Test workflow automation concepts
+
+## Constraints
+- Must not interfere with `/system/` RAG buildup
+- Self-contained in `projects/personal-agent/`
+- Private (gitignored)
+
+## Tech Stack (TBD)
+- Language: Python 3.x
+- Local LLM: (TBD - Ollama, llama.cpp, or API fallback)
+- Memory: (TBD - sqlite, json, or simple files)
+- Interface: (TBD - CLI, TUI, or simple HTTP)
+
+## Relationship to RAG System
+- Independent project
+- May use RAG system as reference
+- May contribute learnings back to `/system/vault/`
+```
+
+---
+
+5. Your Agent Project (`projects/personal-agent/`)
+
+`projects/personal-agent/README.md`:
+
+```markdown
+# Personal Agent
+
+Experimental AI agent for personal workflow automation.
+
+## Status
+Early planning phase. See `/system/vault/projects/personal-agent.md` for context.
+
+## Structure (TBD)
+```
+
+.
+├── agent.py          # Core agent logic
+├── config.yaml       # Configuration
+├── memory/           # Conversation/storage
+├── tools/            # Capabilities
+└── tests/            # Validation
+
+```
+
+## Development
+This project is private and experimental. Not synced to public GitHub.
+```
+
+---
+
+6. Scripts
+
+`scripts/qs.sh` (make executable: `chmod +x scripts/qs.sh`):
+
+```bash
+#!/bin/bash
+# qs.sh - Quickstart: Generate AI context from system lenses
+# Usage: qs.sh ["your query here"] [--compact|--deep]
+
+set -euo pipefail
+
+REPO_ROOT="${REPO:-$(pwd)}"
+SYSTEM_DIR="$REPO_ROOT/system"
+SHARE_DIR="$REPO_ROOT/share"
+
+# Parse args
+QUERY=""
+DEPTH="standard"
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --compact) DEPTH="compact"; shift ;;
+        --deep) DEPTH="deep"; shift ;;
+        --) shift; QUERY="$*"; break ;;
+        *) QUERY="$QUERY $1"; shift ;;
+    esac
+done
+
+QUERY=$(echo "$QUERY" | xargs)
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+OUTPUT_FILE="$SHARE_DIR/generated/context_$TIMESTAMP.md"
+
+# Ensure directory exists
+mkdir -p "$SHARE_DIR/generated"
+
+{
+# Load core
+cat "$SYSTEM_DIR/core/identity.yaml"
+echo ""
+cat "$SYSTEM_DIR/core/constraints.yaml"
+echo ""
+cat "$SYSTEM_DIR/core/env.yaml"
+echo ""
+
+# Classify intent and load lenses
+# (Simple version - grep for triggers)
+load_lens() {
+    local lens="$1"
+    local file="$SYSTEM_DIR/lenses/${lens}.yaml"
+    if [[ -f "$file" ]]; then
+        echo "<!-- Lens: $lens -->"
+        cat "$file"
+        echo ""
+    fi
+}
+
+# Score query against triggers
+SCORE_CODE=0
+SCORE_DESIGN=0
+SCORE_META=0
+
+if echo "$QUERY" | grep -qiE "(fix|bug|error|def |class |import |refactor|debug|traceback|python|kodi)"; then
+    SCORE_CODE=$((SCORE_CODE + 2))
+fi
+if echo "$QUERY" | grep -qiE "(idea|concept|design|structure|brainstorm|how might|what if|architecture)"; then
+    SCORE_DESIGN=$((SCORE_DESIGN + 2))
+fi
+if echo "$QUERY" | grep -qiE "(continue|handoff|status|summary|last time|where were we|workflow|setup|init)"; then
+    SCORE_META=$((SCORE_META + 2))
+fi
+
+# Load active lenses
+[[ $SCORE_CODE -gt 1 ]] && load_lens "code"
+[[ $SCORE_DESIGN -gt 1 ]] && load_lens "design"
+[[ $SCORE_META -gt 1 ]] && load_lens "meta"
+
+# Default to code if nothing triggered
+[[ $SCORE_CODE -eq 0 && $SCORE_DESIGN -eq 0 && $SCORE_META -eq 0 ]] && load_lens "code"
+
+# Load recent handoffs (based on depth)
+HANDOFF_COUNT=1
+[[ "$DEPTH" == "deep" ]] && HANDOFF_COUNT=3
+[[ "$DEPTH" == "compact" ]] && HANDOFF_COUNT=0
+
+if [[ $HANDOFF_COUNT -gt 0 ]]; then
+    echo "<!-- Recent Context -->"
+    ls -t "$SHARE_DIR/handoffs/"* 2>/dev/null | head -n $HANDOFF_COUNT | while read -r f; do
+        echo ""
+        echo "--- Handoff: $(basename "$f") ---"
+        head -30 "$f"
+    done
+fi
+
+# User query
+echo ""
+echo "<!-- User Query -->"
+echo "Query: $QUERY"
+echo "Depth: $DEPTH"
+
+} > "$OUTPUT_FILE"
+
+echo "Context generated: $OUTPUT_FILE"
+cat "$OUTPUT_FILE"
+```
+
+`scripts/lib/intent_classifier.sh`:
+
+```bash
+#!/bin/bash
+# intent_classifier.sh - Detect intent from query
+# Usage: source intent_classifier.sh; classify_intent "query"
+
+REPO_ROOT="${REPO:-$(pwd)}"
+CLASSIFIER_FILE="$REPO_ROOT/system/router/classifier.yaml"
+
+classify_intent() {
+    local query="${1,,}"  # lowercase
+    local active_lenses=()
+    
+    # Simple grep-based scoring (can be enhanced later)
+    local score_code=0
+    local score_design=0
+    local score_meta=0
+    
+    # Code signals
+    if [[ "$query" =~ (fix|bug|error|def |class |import |refactor|debug|traceback|python|kodi|addon) ]]; then
+        score_code=$((score_code + 2))
+    fi
+    
+    # Design signals
+    if [[ "$query" =~ (idea|concept|design|structure|brainstorm|how might|what if|architecture|pattern) ]]; then
+        score_design=$((score_design + 2))
+    fi
+    
+    # Meta signals
+    if [[ "$query" =~ (continue|handoff|status|summary|last time|where were we|workflow|process|setup|init) ]]; then
+        score_meta=$((score_meta + 2))
+    fi
+    
+    # Build result
+    [[ $score_code -gt 1 ]] && active_lenses+=("code")
+    [[ $score_design -gt 1 ]] && active_lenses+=("design")
+    [[ $score_meta -gt 1 ]] && active_lenses+=("meta")
+    
+    # Default
+    [[ ${#active_lenses[@]} -eq 0 ]] && active_lenses+=("code")
+    
+    echo "${active_lenses[*]}"
+}
+
+get_lens_path() {
+    local lens="$1"
+    echo "$REPO_ROOT/system/lenses/${lens}.yaml"
+}
+```
+
+---
+
+7. Gitignore Addition
+
+Add to your `~/.gitignore` (or repo root `.gitignore`):
+
+```gitignore
+# Private projects
+/projects/personal-agent/
+
+# Legacy (keep for reference but don't sync)
+/sandro/
+
+# System (already gitignored, but reinforce)
+/system/
+/vault/
+/logs/
+/zips/
+/share/generated/
+```
+
+---
+
+Quick Start Commands
+
+```bash
+# 1. Create directories
+mkdir -p system/core system/lenses system/router system/vault/projects projects/personal-agent share/generated
+
+# 2. Copy files above to respective paths
+
+# 3. Make scripts executable
+chmod +x scripts/qs.sh
+
+# 4. Test
+./scripts/qs.sh "fix the bug in fluid addon" --compact
+./scripts/qs.sh "design new feature" --deep
+
+# 5. Add to .gitignore
+echo "/projects/personal-agent/" >> .gitignore
+```
+
+Next steps:
+1. Test `qs.sh` with real queries
+2. Refine triggers in lenses based on usage
+3. Start your agent project in `projects/personal-agent/` (completely separate)
+4. When ready, add `vault_bridge.sh` to pull from personal vault selectively
+
+Want me to adjust any content or add the `vault_bridge.sh` stub now?

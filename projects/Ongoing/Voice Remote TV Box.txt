@@ -1,0 +1,47 @@
+﻿User guide  om je Air Remote en TV Box in te richten volgens je prioriteiten.
+1. Read from TV: Firefox Zoom aanpassen
+Omdat je TV Box op 200% zoom staat, is de interface in Firefox vaak te groot. Je kunt dit in Firefox forceren zonder de systeeminstellingen te wijzigen.
+De about:config methode:
+1. Open Firefox op je TV Box.
+2. Typ about:config in de adresbalk.
+3. Zoek naar de regel: layout.css.devPixelsPerPx.
+4. De standaardwaarde is vaak -1.0. Verander dit naar 1.0 of 0.8 (lager = meer overzicht, hoger = grotere letters).
+5. Klik op 'OK' en herlaad Gemini. Nu past het dashboard (Sandro) perfect op je scherm.
+2. Audio In: Air Remote vs. Gemini
+Je wilt de Air Remote microfoon gebruiken voor Gemini en de standaard Google Assistant elimineren.
+Google Assistant uitschakelen:
+1. Ga op je TV Box naar Instellingen > Apparaatvoorkeuren.
+2. Zoek naar Google Assistent.
+3. Zet de schakelaar op Uit.
+4. Schakel ook "Hey Google" detectie uit als die optie er staat.
+Spraakgestuurd typen in Gemini:
+1. Open Gemini in Firefox.
+2. Gebruik de cursor van je Air Remote om in het tekstveld te klikken.
+3. Wanneer het virtuele toetsenbord verschijnt, selecteer je het microfoon-icoontje op dat toetsenbord (meestal Gboard).
+4. Praat nu tegen je Air Remote. Je stem wordt direct omgezet in tekst in het Gemini-venster.
+3. Audio Out: Terugkoppeling
+Zodra je de tekst verstuurt, genereert Gemini een antwoord.
+* Lezen: Het antwoord verschijnt groot op je TV (dankzij de zoom-fix in stap 1).
+* Luisteren: Firefox speelt de audio van Gemini af over je TV-speakers.
+________________
+Samenvatting van de Workflow
+Prioriteit
+	Actie
+	Middel
+	1. Read
+	Fix Firefox scaling
+	about:config (1.0)
+	2. Audio In
+	Mic-toets op toetsenbord
+	Air Remote + Gboard
+	3. Audio Out
+	Directe playback
+	TV Speakers
+	Oefening voor zelfbediening
+Probeer vandaag alleen de Air Remote te gebruiken:
+* Navigeer met de cursor naar het invoerveld.
+* Gebruik de microfoon op het scherm-toetsenbord (niet de knop op de remote zelf, die is nu uitgeschakeld).
+* Controleer of je het antwoord op 3 meter afstand goed kunt lezen.
+Zal ik je helpen met de specifieke stappen om Firefox als je vaste startpagina in te stellen op de TV Box, zodat Sandro direct verschijnt bij het opstarten?
+Maak van je Android TV-afstandsbediening een krachtige tool
+Deze video laat zien hoe je de Google Assistant-instellingen op een Android TV beheert, wat essentieel is om de controle over je microfoon terug te krijgen voor Gemini.

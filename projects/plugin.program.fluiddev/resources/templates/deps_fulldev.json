@@ -1,0 +1,34 @@
+{
+    "id": "deps_fulldev",
+    "name": "Dependency Mapping - FullDev",
+    "description": "Comprehensive dependency analysis with full tracing",
+    "version": "1.0",
+    "module": "dependency_mapper",
+    "mode": "fulldev",
+    "options": {
+        "scan_imports": true,
+        "detect_external_deps": true,
+        "check_kodi_modules": true,
+        "scan_subdirectories": true,
+        "max_depth": null,
+        "include_stdlib": true,
+        "trace_dependency_chain": true,
+        "detect_circular_deps": true,
+        "analyze_version_conflicts": true,
+        "check_pip_packages": true,
+        "generate_requirements_txt": true
+    },
+    "output": {
+        "format": "detailed",
+        "save_report": true,
+        "export_json": true,
+        "export_graph": true,
+        "show_notification": true,
+        "include_recommendations": true
+    },
+    "advanced": {
+        "parallel_processing": false,
+        "cache_results": true,
+        "verbose_logging": true
+    }
+}

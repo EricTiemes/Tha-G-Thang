@@ -1,0 +1,144 @@
+Let me verify the two critical questions:
+
+1. All Agreed Functions Implemented?
+
+YES ✅
+
+Feature	Status	
+Three-tier settings (Simple/Advanced/Pro)	✅ Complete	
+Theme system (Default + Chocolate)	✅ Complete	
+Download flow (background/manual)	✅ Complete	
+Delivery flow (background/manual/ask)	✅ Complete	
+Multi-path delivery (keyword routing)	✅ Complete	
+Privacy (timestamp rename, EXIF strip, obfuscation)	✅ Complete	
+Context menu (configurable, max items)	✅ Complete	
+Favorites (buckets, import/export, smart lists)	✅ Complete	
+Android share receiver	✅ Complete	
+Termux fallback	✅ Complete	
+Background service	✅ Complete	
+Database (SQLite with all tables)	✅ Complete	
+
+2. No Placeholders Anymore?
+
+NO ❌ - Still 2 placeholders:
+
+Module	Status	Reality	
+Playlist	🟡 Stub	Has basic structure but `builder.py` is simplified	
+Meta	🟡 Stub	Has basic structure but `fetcher.py` is simplified	
+
+The Truth:
+- Playlist/Meta have working code but not full features we discussed
+- They won't crash, but they're minimal viable products
+- Full features (smart combos, transcript API, etc.) need more development
+
+Your Decision:
+
+Option A: Ship as-is (Playlist/Meta work but are basic)
+Option B: I mark them clearly as "Phase 2" in code, disable by default
+Option C: Remove them entirely from this release, add later
+
+Which do you want?
+
+
+B as agreed, no minimal playlist , normal like concluded. 
+
+Did you implement all cleaning variations while downloading? as described  in first concept I shared?
+- as module, it would also easy to integrate on saving favorites, or cleanup buckets?
+
+Let me verify the cleaning implementations against your original concept:
+
+Cleaning Features - Status Check
+
+Feature	Status	Location	
+Auto-clean headers/cookies/referrer from files	✅ Yes	`engine.py` - `ydl_opts` privacy settings	
+Strip EXIF/metadata	✅ Optional	`engine.py` - if `privacy_strip_exif` enabled	
+Timestamp rename	✅ Optional	`engine.py` - if `privacy_timestamp_rename` enabled	
+Filename sanitization (remove weird chars)	✅ Yes	`kodi_utils.py` - `sanitize_filename()`	
+Auto-cleanup old downloads	✅ Yes	`service.py` - hourly cleanup task	
+Duplicate detection	❌ No	Not implemented (marked as "Pro" future)	
+Folder organization (by date/channel)	❌ No	Not implemented	
+
+Cleaning as Module?
+
+You asked about making cleaning a separate module for:
+1. Download cleaning (current: in downloader)
+2. Favorites cleanup (not implemented)
+3. Bucket cleanup (not implemented)
+
+Current state: Cleaning is integrated in downloader, not separate module.
+
+Decision Needed:
+
+Option 1: Keep as-is (cleaning in downloader only)
+Option 2: Create separate `cleaner` module that handles:
+- Post-download cleaning
+- Favorites maintenance (remove dead links)
+- Bucket organization (auto-sort by date/views)
+- Storage quota management
+
+Which do you want? And should I add the missing cleaning features (folder org, duplicate detection basic)?
+
+
+OK, understood, we keep clean with download for now. 
+Playlist, I need your input on how. 
+I thought by selecting foderr, another? Y, select another,.. Until n, 
+Save folder set for re use? Y
+Priority Folders, keywords in top? 
+Rest sorted by date new-old 
+Append parent folder in front of entry y!/n  
+(Y =  for example :
+
+#EXTINF:-1,[COLOR goldenrod]New[/COLOR] Fluid-Intro
+/storage/emulated/0/Download/Clips/New/Fluid-Intro.mp4
+#EXTINF:-1,[COLOR teal]New[/COLOR] Zero-Context Memes Part 1
+davs://webdav.hidrive.strato.com:***/users/****/Videos/videos/New/Zero-Context%20Memes%20Part%201.mp4
+
+Clean extensions,  erbdah %20= ' ' 
+
+(Color not crucial, was option in previous build..)
+
+
+I understand your playlist requirements. Let me clarify the features:
+
+Playlist Features You Want:
+
+Feature	Description	
+Multi-folder selection	Select folder 1, then another, until done	
+Save folder set	Remember selected folders for reuse	
+Priority folders	Keywords at top (e.g., "New", "Important")	
+Sort by date	Newest first for rest	
+Parent folder prefix	[New], [Clips], etc. in M3U title	
+Clean extensions	Remove .mp4, %20 → space	
+Optional colors	[COLOR] tags (nice to have)	
+
+Implementation Options:
+
+Option A: Simple - Select folders → Generate M3U once
+Option B: Smart - Save folder sets as "Profiles" (e.g., "My Music Folders")
+Option C: Dynamic - Auto-refresh playlists when folders change
+
+Questions:
+
+1. Storage: Where save M3U files? `special://profile/playlists/` or user choice?
+
+2. Priority keywords: User-defined list? (e.g., "New,Important,HD")
+
+3. Recursive: Scan subfolders? (Yes/No/Depth limit)
+
+4. Formats: Only M3U or also STRM, PLS?
+
+5. Update: Manual refresh or auto-check folders?
+
+Which option (A/B/C) and answers to questions? Then I implement complete `playlist/builder.py`.
+
+
+B 
+1. Storage: Where save M3U files?  special://profile/playlists/videos
+2. Y, more flex then only priority folder in top 
+3. Start from selected parents folder so depth 3/4 suffices
+4. Can, but I imagined streams as ' Export this bucket,  select path, bucket name?  
+saved as single strms in folder named as bucket
+
+With saved path, we can update all, or if manageable, list all saved profiles, enable disable for update all, so only  selected are updated, vsaksvsrttings as last time.
+
+I, that means save settings at the end of the flow, before creating playlist

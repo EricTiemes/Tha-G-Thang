@@ -1,0 +1,20 @@
+{
+    "id": "transcripts_fulldev",
+    "name": "Transcripts - FullDev",
+    "description": "Select specific videos to download",
+    "version": "1.0",
+    "module": "youtube_transcripts",
+    "mode": "fulldev",
+    "options": {
+        "generate_summaries": true,
+        "include_timestamps": true,
+        "video_selection": "manual",
+        "show_estimates": true
+    },
+    "output": {
+        "directory": "{profile_path}/transcripts",
+        "format": "txt",
+        "show_notification": true,
+        "generate_report": true
+    }
+}

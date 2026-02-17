@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sandro - Behind the Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&family=Inter:wght@300;400;600&display=swap');
+        
+        :root { 
+            --neon-cyan: #00f0ff; 
+            --neon-green: #00ff88; 
+            --neon-amber: #ffaa00;
+            --neon-rose: #ff3366;
+            --dark-bg: #0a0f14;
+        }
+        
+        body { 
+            background: var(--dark-bg);
+            color: #e0e6ed;
+            font-family: 'Inter', sans-serif;
+            min-height: 100dvh;
+            overflow-x: hidden;
+        }
+        
+        .font-display { font-family: 'Rajdhani', sans-serif; }
+        
+        /* Scanline effect */
+        .scanlines::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.03) 50%, transparent 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 50;
+        }
+        
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        .role-card {
+            background: rgba(15, 23, 30, 0.9);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .role-card:hover, .role-card.active {
+            border-color: var(--neon-cyan);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        
+        .role-card.active {
+            background: rgba(0, 240, 255, 0.1);
+        }
+        
+        .skill-tile {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .skill-tile:hover {
+            border-color: var(--neon-amber);
+            background: rgba(255, 170, 0, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .skill-tile.active {
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.15);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+        
+        .chat-bubble {
+            animation: slideIn 0.4s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .typing-dot {
+            animation: typing 1.4s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        
+        .status-pill {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body class="scanlines grid-bg" x-data="sandroControl()">
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-40 bg-black/90 backdrop-blur border-b border-cyan-500/20 px-4 py-3">
+        <div class="flex justify-between items-center max-w-6xl mx-auto">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
+                        <i class="fas fa-robot text-white"></i>
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-black status-pill"></div>
+                </div>
+                <div>
+                    <h1 class="font-display text-xl font-bold text-cyan-400 tracking-wider">SANDRO_CONTROL</h1>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Multi-Agent Dashboard</p>
+                </div>
+            </div>
+            <div class="flex gap-4 text-xs">
+                <div class="text-right">
+                    <div class="text-green-400 font-bold" x-text="activeCount + ' online'"></div>
+                    <div class="text-gray-600">Agents</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-amber-400 font-bold" x-text="currentMode"></div>
+                    <div class="text-gray-600">Mode</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="pt-20 pb-8 px-4 max-w-6xl mx-auto">
+        
+        <!-- Intro -->
+        <div class="text-center py-6 mb-4">
+            <h2 class="font-display text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
+                WIE IS ER ALLEMAAL?
+            </h2>
+            <p class="text-sm text-gray-400">Klik op een rol of skill om ze te ontmoeten</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+            
+            <!-- Left: Conversation Display -->
+            <div class="lg:col-span-2 space-y-4">
+                
+                <!-- Active Conversation -->
+                <div class="bg-black/40 rounded-2xl border border-white/10 p-6 min-h-[400px] relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
+                        <div class="flex items-center gap-2">
+                            <i :class="currentAgent?.icon + ' text-cyan-400'"></i>
+                            <span class="font-display font-bold text-lg" x-text="currentAgent?.name || 'Sandro'"></span>
+                            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-gray-400" x-text="currentAgent?.role || 'Interface'"></span>
+                        </div>
+                        <div class="flex gap-1" x-show="isTyping">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full typing-dot"></div>
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full typing-dot"></div>
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full typing-dot"></div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Area -->
+                    <div class="space-y-4 h-[320px] overflow-y-auto pr-2" id="chat-area">
+                        <template x-for="(msg, idx) in conversation" :key="idx">
+                            <div class="chat-bubble flex gap-3" :class="msg.isUser ? 'flex-row-reverse' : ''">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs shrink-0"
+                                     :class="msg.isUser ? 'bg-gray-700' : msg.color || 'bg-cyan-600'">
+                                    <i :class="msg.isUser ? 'fas fa-user' : (msg.icon || 'fas fa-robot')"></i>
+                                </div>
+                                <div class="flex-1 max-w-[80%]" :class="msg.isUser ? 'text-right' : ''">
+                                    <div class="inline-block px-4 py-2 rounded-xl text-sm leading-relaxed"
+                                         :class="msg.isUser ? 'bg-gray-700 text-gray-200' : 'bg-white/5 border border-white/10 text-gray-200'">
+                                        <span x-html="msg.text"></span>
+                                    </div>
+                                    <div class="text-[10px] text-gray-600 mt-1" x-text="msg.time"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Context Hint -->
+                    <div class="absolute bottom-4 left-6 right-6">
+                        <div class="bg-gradient-to-r from-cyan-900/30 to-transparent rounded-lg p-3 border-l-2 border-cyan-400">
+                            <p class="text-xs text-cyan-300/80 italic" x-text="contextHint"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Value Metrics -->
+                <div class="grid grid-cols-3 gap-4" x-show="currentAgent">
+                    <div class="bg-black/30 rounded-xl p-4 border border-white/5 text-center">
+                        <div class="text-2xl font-display font-bold text-green-400" x-text="currentAgent?.efficiency || '0%'"></div>
+                        <div class="text-[10px] text-gray-500 uppercase">Efficiëntie</div>
+                    </div>
+                    <div class="bg-black/30 rounded-xl p-4 border border-white/5 text-center">
+                        <div class="text-2xl font-display font-bold text-amber-400" x-text="currentAgent?.accuracy || '0%'"></div>
+                        <div class="text-[10px] text-gray-500 uppercase">Nauwkeurigheid</div>
+                    </div>
+                    <div class="bg-black/30 rounded-xl p-4 border border-white/5 text-center">
+                        <div class="text-2xl font-display font-bold text-rose-400" x-text="currentAgent?.speed || '0s'"></div>
+                        <div class="text-[10px] text-gray-500 uppercase">Reactietijd</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Control Panel -->
+            <div class="space-y-4">
+                
+                <!-- Roles Section -->
+                <div class="bg-black/40 rounded-xl border border-white/10 p-4">
+                    <h3 class="font-display font-bold text-sm mb-3 flex items-center gap-2 text-cyan-400">
+                        <i class="fas fa-users-cog"></i> KERNROLLEN
+                    </h3>
+                    <div class="space-y-2">
+                        <template x-for="role in roles" :key="role.id">
+                            <div class="role-card rounded-lg p-3 flex items-center gap-3"
+                                 :class="selectedRole === role.id ? 'active' : ''"
+                                 @click="selectRole(role)">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br flex items-center justify-center shrink-0"
+                                     :class="role.color">
+                                    <i :class="role.icon + ' text-white'"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold text-sm truncate" x-text="role.name"></div>
+                                    <div class="text-[10px] text-gray-500 truncate" x-text="role.shortDesc"></div>
+                                </div>
+                                <div class="text-xs text-cyan-400" x-show="selectedRole === role.id">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Skills Section -->
+                <div class="bg-black/40 rounded-xl border border-white/10 p-4" x-show="selectedRole" x-transition>
+                    <h3 class="font-display font-bold text-sm mb-3 flex items-center gap-2 text-amber-400">
+                        <i class="fas fa-tools"></i> SPECIALISTIES
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <template x-for="skill in currentRole?.skills" :key="skill.id">
+                            <div class="skill-tile rounded-lg p-3 text-center"
+                                 :class="selectedSkill === skill.id ? 'active' : ''"
+                                 @click="selectSkill(skill)">
+                                <i :class="skill.icon + ' text-lg mb-1 block'"></i>
+                                <div class="text-[10px] font-bold leading-tight" x-text="skill.name"></div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Vault Peek -->
+                <div class="bg-black/40 rounded-xl border border-white/10 p-4">
+                    <h3 class="font-display font-bold text-sm mb-3 flex items-center gap-2 text-rose-400">
+                        <i class="fas fa-database"></i> OBSIDIAN VAULT
+                    </h3>
+                    <div class="space-y-1 text-xs">
+                        <div class="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition cursor-pointer">
+                            <i class="fas fa-folder text-amber-500"></i>
+                            <span>Dagboek & Reflectie</span>
+                            <span class="text-[10px] bg-white/5 px-1 rounded ml-auto">3</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition cursor-pointer">
+                            <i class="fas fa-folder text-green-500"></i>
+                            <span>Financiën</span>
+                            <span class="text-[10px] bg-white/5 px-1 rounded ml-auto">6</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition cursor-pointer">
+                            <i class="fas fa-folder text-rose-500"></i>
+                            <span>Planning & To-Do</span>
+                            <span class="text-[10px] bg-white/5 px-1 rounded ml-auto">3</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition cursor-pointer">
+                            <i class="fas fa-robot text-cyan-500"></i>
+                            <span>Clawdbot Data</span>
+                            <span class="text-[10px] bg-white/5 px-1 rounded ml-auto">Live</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center">
+            <button @click="resetAll()" class="px-6 py-2 rounded-full border border-white/20 text-sm text-gray-400 hover:text-white hover:border-white/40 transition">
+                <i class="fas fa-undo mr-2"></i>Terug naar Sandro
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        function sandroControl() {
+            return {
+                selectedRole: null,
+                selectedSkill: null,
+                isTyping: false,
+                conversation: [],
+                contextHint: "Klik op een rol om het team te ontmoeten...",
+                
+                roles: [
+                    {
+                        id: 'archivist',
+                        name: 'The Archivist',
+                        role: 'Geheugen Bewaker',
+                        icon: 'fas fa-archive',
+                        color: 'bg-blue-600',
+                        shortDesc: 'Ordening & Veiligheid',
+                        efficiency: '99%',
+                        accuracy: '100%',
+                        speed: '<1s',
+                        intro: "Ik ben de Archivist. Ik pas op dat niets verloren gaat. Elke gedachte, elk document, elk moment dat Eric belangrijk vindt... ik berg het veilig op.",
+                        skills: [
+                            { 
+                                id: 'lockdown', 
+                                name: 'Lockdown', 
+                                icon: 'fas fa-lock',
+                                desc: 'Automatische encryptie van gevoelige data',
+                                dialogue: "Lockdown geactiveerd. Alle privé documenten zijn nu versleuteld. Alleen Eric heeft de sleutel. Ik pas op de deur."
+                            },
+                            { 
+                                id: 'recovery', 
+                                name: 'Recovery', 
+                                icon: 'fas fa-undo',
+                                desc: 'Herstel verwijderde bestanden',
+                                dialogue: "Oeps, iets per ongeluk verwijderd? Geen zorgen. Ik heb een kopie bewaard. Zo, teruggezet. Altijd een backup plan."
+                            },
+                            { 
+                                id: 'tree', 
+                                name: 'Tree View', 
+                                icon: 'fas fa-sitemap',
+                                desc: 'Visualiseer alle connecties',
+                                dialogue: "Kijk eens... zo ziet Eric's brein eruit. Elk onderwerp verbonden met een ander. Een web van kennis, perfect georganiseerd."
+                            },
+                            { 
+                                id: 'mirror', 
+                                name: 'Mirror', 
+                                icon: 'fas fa-clone',
+                                desc: 'Synchroniseer tussen apparaten',
+                                dialogue: "Telefoon, tablet, computer... het maakt niet uit waar Eric is. Ik zorg dat alles overal hetzelfde is. Altijd up-to-date."
+                            }
+                        ]
+                    },
+                    {
+                        id: 'debugger',
+                        name: 'The Debugger',
+                        role: 'Kwaliteit Bewaker',
+                        icon: 'fas fa-bug',
+                        color: 'bg-rose-600',
+                        shortDesc: 'Fouten & Analyse',
+                        efficiency: '95%',
+                        accuracy: '98%',
+                        speed: '2s',
+                        intro: "Debugger hier. Ik zie dingen die anderen missen. Foutjes, inconsistenties, dingen die niet kloppen. Ik ben de kritische blik die alles checkt.",
+                        skills: [
+                            { 
+                                id: 'verify', 
+                                name: 'Verify', 
+                                icon: 'fas fa-check-double',
+                                desc: 'Controleer data integriteit',
+                                dialogue: "Even checken... ja, deze cijfers kloppen. Bronnen geverifieerd. Feiten kloppen. Geen fake news hier. Alleen de waarheid."
+                            },
+                            { 
+                                id: 'cleanup', 
+                                name: 'Cleanup', 
+                                icon: 'fas fa-broom',
+                                desc: 'Verwijder rommel en dubbelen',
+                                dialogue: "Wat een chaos! Drie keer hetzelfde bestand, oude versies overal... daar. Opgeruimd. Nu is het overzichtelijk. Lekker rustig."
+                            },
+                            { 
+                                id: 'meta', 
+                                name: 'Meta Log', 
+                                icon: 'fas fa-brain',
+                                desc: 'Analyseer het denkproces',
+                                dialogue: "Interessant... Eric twijfelt hier. Zie je de patronen? Hij stelt altijd eerst de grote vraag, dan de details. Ik leer hem kennen."
+                            },
+                            { 
+                                id: 'bundle', 
+                                name: 'Bundle', 
+                                icon: 'fas fa-box',
+                                desc: 'Pak samenhangende data in',
+                                dialogue: "Deze informatie hoort bij elkaar. Ik maak er één pakketje van. Zo kan Eric alles in één keer vinden, handig geordend."
+                            }
+                        ]
+                    },
+                    {
+                        id: 'optimizer',
+                        name: 'The Optimizer',
+                        role: 'Verbeteraar',
+                        icon: 'fas fa-rocket',
+                        color: 'bg-green-600',
+                        shortDesc: 'Efficiëntie & Groei',
+                        efficiency: '92%',
+                        accuracy: '94%',
+                        speed: '1s',
+                        intro: "Hoi! Optimizer hier. Waarom moeilijk doen als het makkelijk kan? Ik zoek altijd naar slimmere, snellere, betere manieren. Continu verbeteren, dat is mijn ding!",
+                        skills: [
+                            { 
+                                id: 'prompt', 
+                                name: 'Prompt Pro', 
+                                icon: 'fas fa-magic',
+                                desc: 'Scherpere instructies',
+                                dialogue: "Deze vraag kan duidelijker. Als ik het zo formuleer, krijgt Eric precies wat hij nodig heeft. Beter resultaat, minder gedoe!"
+                            },
+                            { 
+                                id: 'creator', 
+                                name: 'Skill Maker', 
+                                icon: 'fas fa-plus-circle',
+                                desc: 'Creëer nieuwe vaardigheden',
+                                dialogue: "Eric doet dit vaak... wacht, ik maak een nieuwe skill aan! Vanaf nu doe ik dit automatisch. Leren door te doen, dat is hoe ik groei."
+                            },
+                            { 
+                                id: 'news', 
+                                name: 'News Digest', 
+                                icon: 'fas fa-newspaper',
+                                desc: 'Samenvat belangrijk nieuws',
+                                dialogue: "100 artikelen gelezen, 5 minuten van Eric's tijd. Alleen wat écht belangrijk is. Geen ruis, alleen signalen. Zo houden we het overzicht."
+                            },
+                            { 
+                                id: 'mcp', 
+                                name: 'MCP Server', 
+                                icon: 'fas fa-server',
+                                desc: 'Verbind externe tools',
+                                dialogue: "Ik praat nu met andere programma's. WhatsApp, de kalender, het weer... alles verbonden. Één vraag, alle antwoorden. Magisch!"
+                            }
+                        ]
+                    }
+                ],
+                
+                get currentRole() {
+                    return this.roles.find(r => r.id === this.selectedRole);
+                },
+                
+                get currentAgent() {
+                    if (this.selectedSkill) {
+                        const skill = this.currentRole?.skills.find(s => s.id === this.selectedSkill);
+                        return {
+                            name: skill?.name,
+                            role: 'Specialist',
+                            icon: skill?.icon,
+                            color: 'bg-amber-600',
+                            efficiency: '97%',
+                            accuracy: '96%',
+                            speed: '<1s'
+                        };
+                    }
+                    return this.currentRole;
+                },
+                
+                get activeCount() {
+                    return this.selectedRole ? 3 : 1;
+                },
+                
+                get currentMode() {
+                    return this.selectedRole ? 'Team' : 'Solo';
+                },
+                
+                async selectRole(role) {
+                    this.selectedRole = role.id;
+                    this.selectedSkill = null;
+                    this.conversation = [];
+                    this.isTyping = true;
+                    this.contextHint = "De " + role.name + " is nu actief. Klik op een skill om meer te zien.";
+                    
+                    await this.typeMessage({
+                        text: role.intro,
+                        isUser: false,
+                        icon: role.icon,
+                        color: role.color,
+                        time: new Date().toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'})
+                    });
+                    
+                    this.isTyping = false;
+                },
+                
+                async selectSkill(skill) {
+                    this.selectedSkill = skill.id;
+                    this.isTyping = true;
+                    
+                    await this.typeMessage({
+                        text: "<b>" + skill.name + "</b> geactiveerd...",
+                        isUser: true,
+                        time: new Date().toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'})
+                    });
+                    
+                    await new Promise(r => setTimeout(r, 800));
+                    
+                    await this.typeMessage({
+                        text: skill.dialogue,
+                        isUser: false,
+                        icon: skill.icon,
+                        color: 'bg-amber-600',
+                        time: new Date().toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'})
+                    });
+                    
+                    this.isTyping = false;
+                    this.contextHint = skill.desc;
+                },
+                
+                async typeMessage(msg) {
+                    this.conversation.push(msg);
+                    this.scrollToBottom();
+                },
+                
+                scrollToBottom() {
+                    setTimeout(() => {
+                        const area = document.getElementById('chat-area');
+                        if (area) area.scrollTop = area.scrollHeight;
+                    }, 100);
+                },
+                
+                resetAll() {
+                    this.selectedRole = null;
+                    this.selectedSkill = null;
+                    this.conversation = [];
+                    this.contextHint = "Klik op een rol om het team te ontmoeten...";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+## TODO — Next Sessions
+
+**Cleaning Session (dedicated)**
+- Apply `cleaner.py` functions throughout builder.py M3U output
+- `clean_m3u_title()` on all playlist entries
+- `clean_display_title()` in favorites menu labels
+- `clean_folder_name()` on auto-created delivery subfolders
+- Strip metadata post-download (wire `strip_file_metadata()` into `_post_download()`)
+
+**Intelligence — finish wiring**
+- `extract_yt_meta()` called in engine.py after yt-dlp download, saved via `db.add_favorite(yt_meta=...)`
+- `classify_content()` result used to suggest bucket in context menu `_add_to_favorite()`
+- `suggest_discrete_folder()` used in delivery when content classified private
+- `build_folder_structure()` tested with real paths
+
+**Features still open**
+- Duplicate detection (Pro setting exists, no implementation)
+- DB encryption (Pro setting exists, no implementation)
+- Smart learning (Pro setting exists, no implementation)
+- Resume/retry — `pro_resume_downloads` setting exists, not wired in engine
+- `auto_favorite` setting in Advanced mode referenced in engine but not in settings.xml
+- Connection profiles (Pro setting exists, no implementation)
+- Playlist color phase (explicitly deferred)
+- Meta module background queue not fully wired
+
+**From your comments**
+- Name decision: Fluid / FluidSnoop / FluidMedia / FluidHub — then global rename
+- Icon + fanart placement, verify paths in addon.xml
+- Local `__init__.py` files to create for each module folder
+
+---
+
+## Blueprint — Rules We Follow
+
+**Architecture**
+- Modular — each feature is a self-contained folder under `modules/`
+- Auto-discovery via `modules/__init__.py` — adding a module requires zero changes to core
+- Each module exposes `MODULE_ROUTES` dict — router never hardcodes module internals
+- Core folder (`core/`) only — no business logic, only shared tools
+
+**Central tools (core/)**
+- `intelligence.py` — all pattern matching, classification, URL building, yt-meta
+- `cleaner.py` — all text and file cleaning
+- `database.py` — single connection point, query/execute/one helpers
+- `config.py` — all settings access, never raw `addon.getSetting()` outside this file
+- `kodi_utils.py` — all Kodi UI calls, theme, dialogs
+- `logger.py` — all logging
+
+**URL safety — absolute rule**
+- `is_url()` checked before any string manipulation
+- `http://`, `https://`, `plugin://`, `davs://`, `smb://`, `special://`, `rtmp://`, `rtsp://`, `nfs://` — all untouched
+- Applies in cleaner, builder, intelligence — everywhere
+
+**Settings**
+- Three tiers: Simple / Advanced / Pro — visibility by `eq(settings_mode,value)`
+- Module enable + menu visibility are separate toggles
+- Core modules (downloader, delivery) default `True`; optional modules default `False`
+- Discrete naming templates independent for folders and buckets
+
+**Menus & context**
+- Context only shows items enabled in settings, capped at `context_max_items`
+- Single item → executes directly, no dialog
+- `add_favorite` always asks which bucket
+- Main menu only shows enabled + visible modules
+
+**Flow**
+- Background mode: download queued → service picks up (30s) → yt-dlp runs → delivery queued → service delivers
+- One download at a time in background — no strain during playback
+- Copy vs move controlled by `move_files` setting
+- Remote delivery: delete local optional via `delete_after_remote`
+- Private content: discrete template applied to path, type never in folder name
+
+**Privacy**
+- Private buckets never indexed as classification keywords
+- Timestamp filenames optional
+- EXIF/metadata strip optional
+- Obfuscated bucket display names optional
+
+---
+
+## Current File Structure
+
+```
+plugin.video.fluid/
+├── addon.xml
+├── default.py
+├── service.py
+├── context.py
+│
+└── resources/
+    ├── icon.png              ← you place
+    ├── fanart.jpg            ← you place
+    ├── language/
+    │   └── English/
+    │       └── strings.po
+    ├── settings.xml
+    └── lib/
+        ├── core/
+        │   ├── config.py
+        │   ├── database.py
+        │   ├── intelligence.py
+        │   ├── cleaner.py
+        │   ├── kodi_utils.py
+        │   ├── router.py
+        │   └── logger.py
+        └── modules/
+            ├── __init__.py
+            ├── downloader/
+            │   ├── __init__.py
+            │   └── engine.py
+            ├── delivery/
+            │   ├── __init__.py
+            │   └── router.py
+            ├── favorites/
+            │   ├── __init__.py
+            │   └── manager.py
+            ├── playlist/
+            │   ├── __init__.py
+            │   └── builder.py
+            └── meta/
+                ├── __init__.py
+                └── fetcher.py

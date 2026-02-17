@@ -1,0 +1,3 @@
+name: sequence
+type: mode
+description: step-by-step, ordered, dependencies

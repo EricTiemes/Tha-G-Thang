@@ -1,0 +1,18 @@
+{
+    "id": "youtube_transcripts_quick",
+    "name": "YouTube Transcripts - Quick",
+    "description": "Fast transcript download with default settings",
+    "version": "1.0",
+    "module": "youtube_transcripts",
+    "mode": "quick",
+    "options": {
+        "include_timestamps": true,
+        "language": "en",
+        "auto_translate": false
+    },
+    "output": {
+        "format": "txt",
+        "save_location": "~/downloads/transcripts",
+        "show_notification": true
+    }
+}

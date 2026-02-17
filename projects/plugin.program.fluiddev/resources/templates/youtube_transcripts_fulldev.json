@@ -1,0 +1,33 @@
+{
+    "id": "youtube_transcripts_fulldev",
+    "name": "YouTube Transcripts - FullDev",
+    "description": "Advanced transcript download with formatting options",
+    "version": "1.0",
+    "module": "youtube_transcripts",
+    "mode": "fulldev",
+    "options": {
+        "include_timestamps": true,
+        "timestamp_format": "HH:MM:SS",
+        "language": "en",
+        "auto_translate": false,
+        "translation_language": null,
+        "combine_lines": false,
+        "remove_music_notation": false,
+        "clean_formatting": true
+    },
+    "output": {
+        "format": "txt",
+        "save_location": "~/downloads/transcripts",
+        "export_json": false,
+        "export_srt": false,
+        "export_vtt": false,
+        "show_notification": true,
+        "include_metadata": true
+    },
+    "advanced": {
+        "batch_processing": true,
+        "retry_on_failure": true,
+        "max_retries": 3,
+        "verbose_logging": true
+    }
+}

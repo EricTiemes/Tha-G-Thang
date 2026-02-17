@@ -1,0 +1,17 @@
+{
+        "id": "clean_quickstart",
+        "name": "Quick Clean & Reuse",
+        "description": "Fast code cleaning for immediate reuse",
+        "version": "1.0",
+        "module": "code_cleaner",
+        "target_files": ["*.py"],
+        "filters": {
+            "operations": ["replace_addon_id", "replace_addon_name", "clean_paths"]
+        },
+        "delivery_format": "code_bundle",
+        "options": {
+            "auto_generalize": True,
+            "preserve_comments": True,
+            "output_format": "single_file"
+        }
+    }

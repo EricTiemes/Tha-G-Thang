@@ -1,0 +1,25 @@
+YouTube's new requirement for Client Integrity (PoToken/Sih validation)
+
+YouTube now blocks requests that don't look like they are coming from a "verified" device.
+
+Here is how to fix this:
+
+### 1. The "Protocol" Fix (Most Likely Cause)
+
+The plugin has different "Clients" it can mimic (Web, Android, iOS, TV). If it’s trying to use the **Web** client without a valid session, YouTube returns "Unavailable."
+
+### Why the Anonymizer/Incognito failed
+
+In your logs, the error happens at `load_stream_info`. When you are in "Incognito" or using an outdated "Anonymizer," the plugin sends a "Visitor Data" string to YouTube. If that string isn't signed by a recent Google security token, YouTube triggers a "soft-block" and tells the plugin the video doesn't exist.
+
+The plugin has different "Clients" it can mimic (Web, Android, iOS, TV). If it’s trying to use the **Web** client without a valid session, YouTube returns "Unavailable."
+
+* The developer (**anxdpanic**) maintains a development version that specifically bypasses the "Video Unavailable" error using a new signature method.
+
+anxdpanic GitHub Releases](https://github.com/anxdpanic/plugin.video.youtube/releases).
+* Look for the **latest Alpha or Beta** (usually version **7.0.x.alphaX**).
+* **GitHub Profile:** `https://github.com/MoojMidge`
+* **YouTube Plugin Fork:** `https://github.com/MoojMidge/plugin.video.youtube`
+* **Direct Download (Unofficial Branch):** [plugin.video.youtube-nexus-unofficial.zip](https://github.com/MoojMidge/plugin.video.youtube/archive/refs/heads/nexus-unofficial.zip)
+
+* Use lists without  `&incognito=true`

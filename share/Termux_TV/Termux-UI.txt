@@ -1,0 +1,33 @@
+Omdat een TV Box geen fysieke volumeknoppen heeft, passen we het font aan via de configuratie.
+1. Font vergroten via properties
+Kopieer en plak dit commando om het font direct te vergroten naar bijvoorbeeld grootte 20:
+sed -i 's/^# font-size = .*/font-size = 20/' ~/.termux/termux.properties && termux-reload-settings
+
+2. Extra toetsenbord (Extra Keys)
+Zonder volumeknoppen heb je softwarematige knoppen nodig voor CTRL, ALT, etc. Gebruik dit blok om een handige balk boven je toetsenbord te krijgen:
+mkdir -p ~/.termux
+echo "extra-keys = [['ESC','/','-','HOME','UP','END','PGUP'],['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]" > ~/.termux/termux.properties
+termux-reload-settings
+
+3. Font handmatig wijzigen (als je geen editor wilt gebruiken)
+Wil je een specifieke grootte, verander dan het getal (bijv. 24 of 30 voor TV):
+echo "font-size = 24" >> ~/.termux/termux.properties && termux-reload-settings
+
+4. Audio inschakelen (voor TV Box)
+Start de audio-service zodat media-apps geluid geven:
+pulseaudio --start --exit-idle-time=-1
+
+
+
+termux-reload-settings
+
+# 1. Update Termux
+pkg update && pkg upgrade -y
+
+pkg install termux-styling termux-api -y
+
+pkg install openssh rsync nmap termux-auth termux-services -y
+
+pkg install build-essential golang rust python-pip nodejs-lts git -y
+
+pkg install pulseaudio mpv libsoxr -y

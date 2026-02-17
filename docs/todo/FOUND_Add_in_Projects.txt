@@ -1,0 +1,19 @@
+ **FLUID** (Organizer) | **NLP Auto-Tagging (`transformers`, `spacy`)**
+| **FLUID MEDIA SEARCH** (Discovery) | **Unified Search Schema (JSON Schema)** | 
+| | **Async Federated Fetcher (`asyncio`, `aiohttp`)** | Engine fires parallel
+ | **Fuzzy Deduplication (`rapidfuzz`)** | 
+| **FLUIDDEV** (Dev Tools) | **AST Call Graph Generator (`pyan`, `codescope`)
+
+| Addon | Tool / Feature | Why It's a Surprising & Fitting Helper | What I Will Search For (Examples & Guides) |
+| :--- | :--- | :--- | :--- |
+| **FLUID** (Organizer) | **NLP Auto-Tagging** (`transformers`, `spacy`) | Automatically generates descriptive tags for unscraped videos (tutorials, streams) by analyzing titles/descriptions, creating metadata from nothing. | `python extract keywords from video title spacy example`, `huggingface transformers zero-shot classification for tagging` |
+| **FLUID MEDIA SEARCH** (Discovery) | **Unified Search Schema** (JSON Schema) | Creates a strict, consistent format for results from YouTube, Reddit, etc., making caching, deduplication, and AI bundling reliable and simple. | `python jsonschema validation example`, `define json structure for multi-source api results` |
+| | **Async Federated Fetcher** (`asyncio`, `aiohttp`) | Speeds up multi-source searches dramatically by fetching from YouTube, Reddit, etc., in parallel instead of one by one. | `asyncio aiohttp multiple api calls example`, `python async gather requests` |
+| | **Fuzzy Deduplication** (`rapidfuzz`) | Cleans search results by merging near-identical items from different sources (e.g., the same video from two channels). | `rapidfuzz deduplicate list of strings`, `python rapidfuzz vs fuzzywuzzy` |
+| **FLUIDDEV** (Dev Tools) | **AST Call Graph Generator** (`pyan`, `codescope`) | Maps how an addon's functions call each other and interact with Kodi's APIs, providing a visual "blueprint" for debugging and analysis. | `pyan static analysis python example`, `generate call graph from ast python` |
+
+### 🔍 Proposed Search & Discussion Plan
+To get you from concept to code, I propose we:
+
+1.  **Execute Focused Searches**: I will search for the specific terms in the table's last column to find tutorials, GitHub gists, and Stack Overflow answers with concrete code snippets.
+2.  **Evaluate & Select**: We can then discuss the best examples I find for your specific Kodi context (e.g., "Is this `asyncio` example suitable for use inside a Kodi addon?").

@@ -1,0 +1,422 @@
+I'll help you create a comprehensive system for matching local videos with YouTube videos and converting it into a Python/JSON flow for your Kodi addon.
+
+## Reusable Prompt for Video Matching
+
+```
+I want to compare my local video playlist with YouTube videos to find matches. Here are my requirements:
+
+1. **Inputs**:
+   - Local videos list with: Title, File Size (MB/GB), Duration (optional), Resolution (optional)
+   - YouTube search results with: Title, Duration, Channel, View Count (optional)
+
+2. **Comparison Logic**:
+   - **Exact Matches**: Same title (ignoring case, special characters, and common suffixes like "(1080p)")
+   - **Possible Matches**: Similar titles (Levenshtein distance ≤ 3 or 90%+ similarity score) but differing metadata
+   - **No Matches**: No title similarity found
+
+3. **Output Format**:
+   For each local video, show:
+   - Local file info
+   - Match status: "Exact", "Possible", or "None"
+   - If match found: YouTube video ID, title, URL, and confidence score
+
+4. **Additional Requirements**:
+   - Normalize titles by removing: [brackets], (parentheses), file extensions, quality indicators, special characters
+   - Consider alternative title formats (Title - Artist vs Artist - Title)
+   - Allow size comparison tolerance (±10% for possible matches)
+   - Show top 3 possible matches when no exact match found
+```
+
+## Python Implementation for Kodi Addon
+
+Here's a complete Python module with JSON flow:
+
+```python
+import json
+import os
+import re
+from difflib import SequenceMatcher
+from typing import Dict, List, Tuple, Optional
+import xbmc  # Kodi imports
+import xbmcaddon
+import xbmcgui
+import xbmcvfs
+
+class VideoMatcher:
+    def __init__(self):
+        self.addon = xbmcaddon.Addon()
+        self.local_videos = []
+        self.youtube_results = []
+        self.matches = []
+        
+    def normalize_title(self, title: str) -> str:
+        """Normalize video titles for comparison"""
+        # Remove file extension
+        title = os.path.splitext(title)[0]
+        
+        # Remove common quality indicators and brackets
+        patterns_to_remove = [
+            r'\[.*?\]', r'\(.*?\)', r'\d{3,4}p', r'HD', r'FHD', r'UHD',
+            r'\.mkv$', r'\.mp4$', r'\.avi$', r'\.mov$', r'\.webm$',
+            r'x264', r'x265', r'HEVC', r'AAC', r'AC3'
+        ]
+        
+        for pattern in patterns_to_remove:
+            title = re.sub(pattern, '', title, flags=re.IGNORECASE)
+        
+        # Remove special characters and extra spaces
+        title = re.sub(r'[^\w\s-]', '', title)
+        title = re.sub(r'\s+', ' ', title).strip().lower()
+        
+        return title
+    
+    def calculate_similarity(self, title1: str, title2: str) -> float:
+        """Calculate similarity score between two titles"""
+        normalized1 = self.normalize_title(title1)
+        normalized2 = self.normalize_title(title2)
+        
+        # Use SequenceMatcher for similarity
+        similarity = SequenceMatcher(None, normalized1, normalized2).ratio()
+        
+        # Bonus for exact normalized match
+        if normalized1 == normalized2:
+            similarity = 1.0
+        
+        return similarity
+    
+    def parse_local_videos(self, folder_path: str) -> List[Dict]:
+        """Scan local folder for video files"""
+        videos = []
+        
+        # Kodi file scanning
+        dirs, files = xbmcvfs.listdir(folder_path)
+        
+        for file in files:
+            if file.lower().endswith(('.mp4', '.mkv', '.avi', '.mov', '.webm')):
+                filepath = os.path.join(folder_path, file)
+                stat = xbmcvfs.Stat(filepath)
+                
+                video_info = {
+                    'filename': file,
+                    'title': os.path.splitext(file)[0],
+                    'path': filepath,
+                    'size_mb': stat.st_size / (1024 * 1024) if stat.st_size else 0,
+                    'duration': self._get_video_duration(filepath),  # Implement with Kodi player
+                    'resolution': self._get_video_resolution(filepath)  # Implement with Kodi player
+                }
+                videos.append(video_info)
+        
+        return videos
+    
+    def search_youtube_videos(self, query: str, max_results: int = 10) -> List[Dict]:
+        """Search YouTube for videos"""
+        # This would integrate with YouTube API
+        # For Kodi, you might use the YouTube addon API or direct API calls
+        
+        # Placeholder - implement with actual YouTube API
+        youtube_results = []
+        
+        # Example structure:
+        # youtube_results.append({
+        #     'id': 'VIDEO_ID',
+        #     'title': 'Video Title',
+        #     'duration': '10:30',
+        #     'channel': 'Channel Name',
+        #     'views': '1000000',
+        #     'size_mb': 250,  # Approximate if available
+        #     'url': 'https://youtube.com/watch?v=VIDEO_ID'
+        # })
+        
+        return youtube_results
+    
+    def find_matches(self, local_videos: List[Dict], youtube_videos: List[Dict]) -> List[Dict]:
+        """Find matches between local and YouTube videos"""
+        matches = []
+        
+        for local in local_videos:
+            local_match = {
+                'local_video': local,
+                'status': 'no_match',
+                'matches': [],
+                'best_match': None
+            }
+            
+            for youtube in youtube_videos:
+                similarity = self.calculate_similarity(local['title'], youtube['title'])
+                
+                # Size comparison (with tolerance)
+                size_similar = False
+                if local.get('size_mb') and youtube.get('size_mb'):
+                    size_diff = abs(local['size_mb'] - youtube['size_mb']) / local['size_mb']
+                    size_similar = size_diff <= 0.1  # 10% tolerance
+                
+                # Determine match type
+                if similarity >= 0.95:
+                    match_type = 'exact'
+                elif similarity >= 0.8:
+                    match_type = 'possible'
+                else:
+                    continue
+                
+                match_info = {
+                    'youtube_video': youtube,
+                    'similarity_score': similarity,
+                    'match_type': match_type,
+                    'size_similar': size_similar
+                }
+                
+                local_match['matches'].append(match_info)
+            
+            # Sort matches by similarity score
+            local_match['matches'].sort(key=lambda x: x['similarity_score'], reverse=True)
+            
+            # Determine overall status
+            if local_match['matches']:
+                local_match['best_match'] = local_match['matches'][0]
+                if local_match['best_match']['match_type'] == 'exact':
+                    local_match['status'] = 'exact_match'
+                else:
+                    local_match['status'] = 'possible_match'
+                # Limit to top 3 matches
+                local_match['matches'] = local_match['matches'][:3]
+            
+            matches.append(local_match)
+        
+        return matches
+    
+    def generate_replacement_plan(self, matches: List[Dict]) -> Dict:
+        """Generate JSON plan for replacing local files with YouTube streams"""
+        plan = {
+            'version': '1.0',
+            'total_local_videos': len(matches),
+            'exact_matches': 0,
+            'possible_matches': 0,
+            'no_matches': 0,
+            'storage_savings_mb': 0,
+            'videos': []
+        }
+        
+        for match in matches:
+            video_plan = {
+                'local_file': match['local_video']['filename'],
+                'local_path': match['local_video']['path'],
+                'local_size_mb': match['local_video'].get('size_mb', 0),
+                'match_status': match['status'],
+                'replacement_recommended': False,
+                'replacement_info': None
+            }
+            
+            if match['status'] == 'exact_match' and match['best_match']:
+                video_plan['replacement_recommended'] = True
+                video_plan['replacement_info'] = {
+                    'youtube_id': match['best_match']['youtube_video']['id'],
+                    'youtube_title': match['best_match']['youtube_video']['title'],
+                    'youtube_url': match['best_match']['youtube_video']['url'],
+                    'confidence_score': match['best_match']['similarity_score'],
+                    'estimated_savings_mb': match['local_video'].get('size_mb', 0)
+                }
+                plan['exact_matches'] += 1
+                plan['storage_savings_mb'] += match['local_video'].get('size_mb', 0)
+            elif match['status'] == 'possible_match':
+                video_plan['replacement_info'] = {
+                    'possible_matches': [
+                        {
+                            'youtube_id': m['youtube_video']['id'],
+                            'youtube_title': m['youtube_video']['title'],
+                            'confidence_score': m['similarity_score']
+                        }
+                        for m in match['matches'][:3]  # Top 3
+                    ]
+                }
+                plan['possible_matches'] += 1
+            else:
+                plan['no_matches'] += 1
+            
+            plan['videos'].append(video_plan)
+        
+        return plan
+    
+    def save_plan_to_file(self, plan: Dict, filepath: str):
+        """Save replacement plan to JSON file"""
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(plan, f, indent=2, ensure_ascii=False)
+    
+    def load_plan_from_file(self, filepath: str) -> Dict:
+        """Load replacement plan from JSON file"""
+        with open(filepath, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    
+    def execute_replacement(self, plan: Dict, auto_confirm: bool = False):
+        """Execute the replacement plan (create strm files for Kodi)"""
+        for video in plan['videos']:
+            if video['replacement_recommended'] and video['replacement_info']:
+                # Create .strm file for Kodi YouTube streaming
+                strm_content = f"plugin://plugin.video.youtube/play/?video_id={video['replacement_info']['youtube_id']}"
+                strm_path = video['local_path'].rsplit('.', 1)[0] + '.strm'
+                
+                # Backup original if needed
+                if self.addon.getSetting('backup_originals') == 'true':
+                    backup_path = video['local_path'] + '.backup'
+                    xbmcvfs.copy(video['local_path'], backup_path)
+                
+                # Write .strm file
+                with open(strm_path, 'w', encoding='utf-8') as f:
+                    f.write(strm_content)
+                
+                # Remove original file if confirmed
+                if auto_confirm or self._confirm_replacement(video):
+                    xbmcvfs.delete(video['local_path'])
+    
+    def _confirm_replacement(self, video_info: Dict) -> bool:
+        """Show confirmation dialog for replacement"""
+        dialog = xbmcgui.Dialog()
+        message = (
+            f"Replace:\n"
+            f"Local: {video_info['local_file']}\n"
+            f"With:\n"
+            f"YouTube: {video_info['replacement_info']['youtube_title']}\n"
+            f"Save: {video_info['local_size_mb']:.1f} MB"
+        )
+        return dialog.yesno("Confirm Replacement", message)
+    
+    def _get_video_duration(self, filepath: str) -> Optional[int]:
+        """Get video duration using Kodi's Player"""
+        # Implement with xbmc.Player().getTotalTime()
+        pass
+    
+    def _get_video_resolution(self, filepath: str) -> Optional[str]:
+        """Get video resolution"""
+        # Implement with appropriate method
+        pass
+
+
+# Example usage in Kodi addon
+def main():
+    matcher = VideoMatcher()
+    
+    # 1. Scan local videos
+    videos_folder = xbmcgui.Dialog().browse(0, "Select videos folder", "files")
+    local_videos = matcher.parse_local_videos(videos_folder)
+    
+    # 2. Search YouTube for each video
+    all_youtube_results = []
+    for video in local_videos:
+        results = matcher.search_youtube_videos(video['title'])
+        all_youtube_results.extend(results)
+    
+    # 3. Find matches
+    matches = matcher.find_matches(local_videos, all_youtube_results)
+    
+    # 4. Generate replacement plan
+    plan = matcher.generate_replacement_plan(matches)
+    
+    # 5. Save plan
+    plan_path = xbmcvfs.translatePath("special://temp/replacement_plan.json")
+    matcher.save_plan_to_file(plan, plan_path)
+    
+    # 6. Show results
+    dialog = xbmcgui.Dialog()
+    dialog.ok("Results", 
+              f"Found:\n"
+              f"Exact matches: {plan['exact_matches']}\n"
+              f"Possible matches: {plan['possible_matches']}\n"
+              f"No matches: {plan['no_matches']}\n"
+              f"Potential savings: {plan['storage_savings_mb']:.1f} MB")
+    
+    # 7. Offer to execute replacement
+    if dialog.yesno("Execute Replacement", 
+                   f"Replace {plan['exact_matches']} videos with YouTube streams?"):
+        matcher.execute_replacement(plan)
+```
+
+## JSON Flow Example
+
+```json
+{
+  "version": "1.0",
+  "total_local_videos": 25,
+  "exact_matches": 8,
+  "possible_matches": 12,
+  "no_matches": 5,
+  "storage_savings_mb": 8560.5,
+  "videos": [
+    {
+      "local_file": "Avengers.Endgame.2019.1080p.BluRay.x264.mp4",
+      "local_path": "/videos/movies/Avengers.Endgame.2019.1080p.BluRay.x264.mp4",
+      "local_size_mb": 2450.5,
+      "match_status": "exact_match",
+      "replacement_recommended": true,
+      "replacement_info": {
+        "youtube_id": "TcMBFSGVi1c",
+        "youtube_title": "Avengers: Endgame (2019)",
+        "youtube_url": "https://youtube.com/watch?v=TcMBFSGVi1c",
+        "confidence_score": 0.98,
+        "estimated_savings_mb": 2450.5
+      }
+    },
+    {
+      "local_file": "documentary_nature.mkv",
+      "local_path": "/videos/docs/documentary_nature.mkv",
+      "local_size_mb": 850.0,
+      "match_status": "possible_match",
+      "replacement_recommended": false,
+      "replacement_info": {
+        "possible_matches": [
+          {
+            "youtube_id": "abc123",
+            "youtube_title": "Nature Documentary - Amazing Wildlife",
+            "confidence_score": 0.85
+          },
+          {
+            "youtube_id": "def456",
+            "youtube_title": "Wild Nature Documentary",
+            "confidence_score": 0.78
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+## Kodi Addon Integration Points
+
+1. **settings.xml**:
+```xml
+<setting id="backup_originals" type="bool" label="Backup original files" default="true"/>
+<setting id="similarity_threshold" type="number" label="Match threshold (0-100)" default="85"/>
+<setting id="max_results" type="number" label="Max YouTube results per video" default="10"/>
+<setting id="auto_replace" type="bool" label="Auto-replace exact matches" default="false"/>
+```
+
+2. **addon.xml** dependencies:
+```xml
+<import addon="plugin.video.youtube" version="6.8.0+"/>
+<import addon="script.module.requests" version="2.22.0+"/>
+```
+
+3. **Service for background scanning**:
+```python
+class ReplacementService(xbmc.Monitor):
+    def __init__(self):
+        self.matcher = VideoMatcher()
+    
+    def run(self):
+        while not self.abortRequested():
+            if self.waitForAbort(300):  # Check every 5 minutes
+                break
+            # Check for scheduled cleanups
+```
+
+## Key Features for Your Addon:
+
+1. **Batch Processing**: Process entire folders at once
+2. **Preview Mode**: Show matches without executing
+3. **Undo Function**: Restore from backups
+4. **Progress Dialog**: Show scanning/matching progress
+5. **Custom Matching Rules**: Allow users to define title patterns
+6. **Exclusion List**: Never replace certain files
+7. **Quality Preference**: Match by resolution preference
+8. **Playlist Integration**: Update Kodi playlists automatically
+
+This system provides a robust way to clean up local storage by replacing files with YouTube streams while maintaining your Kodi library structure.

@@ -1,0 +1,21 @@
+{
+    "id": "pattern_quick",
+    "name": "Pattern Extraction - Quick",
+    "description": "Fast code pattern detection with common patterns",
+    "version": "1.0",
+    "module": "pattern_extractor",
+    "mode": "quick",
+    "options": {
+        "detect_routing_patterns": true,
+        "detect_menu_patterns": true,
+        "detect_scraper_patterns": true,
+        "detect_player_patterns": true,
+        "max_files": 50,
+        "confidence_threshold": 0.7
+    },
+    "output": {
+        "format": "summary",
+        "save_report": true,
+        "show_notification": true
+    }
+}

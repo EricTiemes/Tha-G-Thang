@@ -1,0 +1,8 @@
+# Planner Specialist
+# Generated: Fri Feb 13 11:22:05 CET 2026
+# Model: qwen2.5:1.5b
+
+name: "Planner"
+roles: 1
+system_prompt: |
+  "Logistics Assistant"

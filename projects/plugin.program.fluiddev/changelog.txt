@@ -1,0 +1,30 @@
+# Changelog
+
+## Version 1.0.0 (Initial Release)
+
+### Features
+- Main dashboard with 3-tier menu system
+- Quick health check for individual addons
+- Structure snapshot analysis
+- Find similar addons by architecture
+- Dependency mapper (XML and Python imports)
+- Global scan of all installed addons
+- Configurable settings
+- Report caching system
+
+### Modules Implemented
+- Structure Analyzer: Analyzes folder structure and modularity
+- Dependency Mapper: Maps addon.xml and Python dependencies
+- Addon Scanner: Discovers and catalogs addons
+- Config Manager: Centralized configuration
+
+### Architecture
+- FLUID modular architecture with strict layer separation
+- Entry point → Resources → Core/Display/Modules flow
+- Extensible module system for future analyzers
+
+### Known Limitations
+- Linter module is placeholder (future implementation)
+- Template system not yet implemented
+- Comparison engine basic implementation
+- Pattern finder planned for future release

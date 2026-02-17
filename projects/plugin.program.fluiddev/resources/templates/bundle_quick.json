@@ -1,0 +1,21 @@
+{
+    "id": "bundle_quick",
+    "name": "Code Bundling - Quick",
+    "description": "Fast code bundling with smart defaults",
+    "version": "1.0",
+    "module": "code_bundler",
+    "mode": "quick",
+    "options": {
+        "bundle_resources": true,
+        "bundle_dependencies": true,
+        "minify_code": false,
+        "create_zip": true,
+        "include_addon_xml": true
+    },
+    "output": {
+        "format": "summary",
+        "save_report": true,
+        "show_notification": true,
+        "bundle_location": "output/"
+    }
+}

@@ -1,0 +1,241 @@
+{
+    "wizard_id": "delivery_wizard",
+    "name": "Delivery & Export Wizard",
+    "description": "Interactive wizard for choosing output format, destination, and delivery method",
+    "version": "1.0",
+    
+    "steps": [
+        {
+            "step": 1,
+            "title": "What do you want to do with the results?",
+            "description": "Choose your primary goal for this analysis",
+            "options": [
+                {
+                    "id": "quick_insight",
+                    "label": "⚡ Quick Insight",
+                    "description": "Get a fast summary I can read now",
+                    "icon": "⚡",
+                    "recommended_for": ["quickstart_templates"],
+                    "next_step": 2,
+                    "default_format": "ai_handoff"
+                },
+                {
+                    "id": "deep_analysis",
+                    "label": "🔬 Deep Analysis",
+                    "description": "Detailed technical report with full findings",
+                    "icon": "🔬",
+                    "recommended_for": ["fulldev_templates"],
+                    "next_step": 2,
+                    "default_format": "detailed_report"
+                },
+                {
+                    "id": "reuse_code",
+                    "label": "📦 Reuse Code",
+                    "description": "Extract and clean code for my own project",
+                    "icon": "📦",
+                    "recommended_for": ["pattern_extractor", "code_cleaner"],
+                    "next_step": 2,
+                    "default_format": "code_bundle"
+                },
+                {
+                    "id": "compare_learn",
+                    "label": "⚖️ Compare & Learn",
+                    "description": "Compare with other addons to learn patterns",
+                    "icon": "⚖️",
+                    "recommended_for": ["comparison_templates"],
+                    "next_step": 2,
+                    "default_format": "comparison_report"
+                },
+                {
+                    "id": "ai_assist",
+                    "label": "🤖 AI Assistant",
+                    "description": "Format for ChatGPT/Claude with context",
+                    "icon": "🤖",
+                    "recommended_for": ["all_templates"],
+                    "next_step": 2,
+                    "default_format": "llm_prompt"
+                }
+            ]
+        },
+        
+        {
+            "step": 2,
+            "title": "Choose Output Format",
+            "description": "How should the results be formatted?",
+            "conditional_on": "step1_choice",
+            "options": [
+                {
+                    "id": "ai_handoff",
+                    "label": "📋 AI Handoff",
+                    "description": "Concise markdown summary with key findings, recommendations, and next steps. Perfect for quick review.",
+                    "includes": ["summary", "key_findings", "recommendations", "code_snippets"],
+                    "best_for": "Quick understanding and action items"
+                },
+                {
+                    "id": "detailed_report",
+                    "label": "📊 Detailed Technical Report",
+                    "description": "Comprehensive analysis with metrics, graphs, full code listings, and architectural diagrams.",
+                    "includes": ["full_metrics", "code_listings", "call_graphs", "dependency_trees", "recommendations"],
+                    "best_for": "Deep technical understanding"
+                },
+                {
+                    "id": "code_bundle",
+                    "label": "📦 Reusable Code Package",
+                    "description": "Cleaned, generalized code ready to use in your project. Includes imports and structure.",
+                    "includes": ["cleaned_code", "module_structure", "placeholders", "usage_examples"],
+                    "best_for": "Copy-paste into your addon"
+                },
+                {
+                    "id": "blueprint",
+                    "label": "🏗️ Blueprint Template",
+                    "description": "Starter template based on the analyzed addon. Includes folder structure and starter code.",
+                    "includes": ["folder_structure", "starter_files", "placeholders", "setup_instructions"],
+                    "best_for": "Creating new addons from patterns"
+                },
+                {
+                    "id": "llm_prompt",
+                    "label": "💬 LLM Prompt",
+                    "description": "Pre-formatted prompt with context for ChatGPT, Claude, or other AI assistants.",
+                    "includes": ["context", "role_definition", "specific_questions", "code_context"],
+                    "best_for": "Getting AI help with the code"
+                },
+                {
+                    "id": "comparison_report",
+                    "label": "⚖️ Side-by-Side Comparison",
+                    "description": "Visual comparison highlighting similarities, differences, and recommendations.",
+                    "includes": ["diff_view", "similarity_score", "common_patterns", "unique_features"],
+                    "best_for": "Understanding differences between addons"
+                }
+            ]
+        },
+        
+        {
+            "step": 3,
+            "title": "Where should we deliver the results?",
+            "description": "Choose destination for the output files",
+            "options": [
+                {
+                    "id": "kodi_display",
+                    "label": "📺 Show in Kodi",
+                    "description": "Display results in Kodi text viewer (immediate, temporary)",
+                    "pros": ["Immediate", "No file management"],
+                    "cons": ["Not saved", "Hard to copy-paste"]
+                },
+                {
+                    "id": "addon_data",
+                    "label": "💾 Save to Addon Data",
+                    "description": "Save in plugin.program.fluiddev addon_data folder",
+                    "path": "special://profile/addon_data/plugin.program.fluiddev/reports/",
+                    "pros": ["Organized", "Persistent", "Easy to find"],
+                    "cons": ["Kodi-only access"]
+                },
+                {
+                    "id": "acode_export",
+                    "label": "📱 Export to Acode (Android)",
+                    "description": "Save to /storage/emulated/0/Download/FluidDevExports/ for easy editing",
+                    "path": "/storage/emulated/0/Download/FluidDevExports/",
+                    "pros": ["Edit on phone", "Easy share", "Works with Acode"],
+                    "cons": ["Android only"]
+                },
+                {
+                    "id": "custom_path",
+                    "label": "📂 Custom Path",
+                    "description": "Specify your own destination folder",
+                    "requires_input": True,
+                    "input_label": "Enter full path",
+                    "pros": ["Full control", "Any location"],
+                    "cons": ["Must exist", "Manual entry"]
+                }
+            ]
+        },
+        
+        {
+            "step": 4,
+            "title": "Additional Options",
+            "description": "Fine-tune your output",
+            "options_type": "checkboxes",
+            "choices": [
+                {
+                    "id": "include_snippets",
+                    "label": "Include code snippets",
+                    "default": True,
+                    "description": "Show actual code examples in the report"
+                },
+                {
+                    "id": "include_metrics",
+                    "label": "Include metrics & statistics",
+                    "default": True,
+                    "description": "Show line counts, complexity scores, etc."
+                },
+                {
+                    "id": "include_recommendations",
+                    "label": "Include AI recommendations",
+                    "default": True,
+                    "description": "Get suggestions for improvements"
+                },
+                {
+                    "id": "auto_clean",
+                    "label": "Auto-clean extracted code",
+                    "default": False,
+                    "description": "Remove addon-specific identifiers automatically",
+                    "only_show_for": ["code_bundle", "blueprint"]
+                },
+                {
+                    "id": "generate_index",
+                    "label": "Generate index file",
+                    "default": True,
+                    "description": "Create INDEX.txt with summary of all files"
+                },
+                {
+                    "id": "compress_output",
+                    "label": "Compress to ZIP",
+                    "default": False,
+                    "description": "Create single ZIP file instead of folder"
+                }
+            ]
+        }
+    ],
+    
+    "presets": [
+        {
+            "name": "Quick Look",
+            "description": "Fastest option - view in Kodi now",
+            "configuration": {
+                "goal": "quick_insight",
+                "format": "ai_handoff",
+                "destination": "kodi_display",
+                "options": ["include_snippets"]
+            }
+        },
+        {
+            "name": "Save for Later",
+            "description": "Save detailed report to addon_data",
+            "configuration": {
+                "goal": "deep_analysis",
+                "format": "detailed_report",
+                "destination": "addon_data",
+                "options": ["include_snippets", "include_metrics", "include_recommendations", "generate_index"]
+            }
+        },
+        {
+            "name": "Reuse in Acode",
+            "description": "Export cleaned code to Android for editing",
+            "configuration": {
+                "goal": "reuse_code",
+                "format": "code_bundle",
+                "destination": "acode_export",
+                "options": ["auto_clean", "generate_index"]
+            }
+        },
+        {
+            "name": "Ask AI About It",
+            "description": "Format for ChatGPT with full context",
+            "configuration": {
+                "goal": "ai_assist",
+                "format": "llm_prompt",
+                "destination": "acode_export",
+                "options": ["include_snippets", "include_metrics", "include_recommendations"]
+            }
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+    * "Design Git workflows for specific types of projects, such as managing large binary files, versioning machine learning models, or collaborating on design assets. Address the unique challenges and requirements of each use case. Wait, and provide specialized workflows."
+    
+      * "Create prompts that help generate documentation for Git repositories, including README files, contribution guidelines, and API documentation. The documentation should be clear, concise, and informative. Wait, and give documentation templates."  
+    
+    * "Explore how Git and GitHub can be used for purposes beyond software development, such as managing documentation, tracking configurations, or collaborating on creative projects. Provide examples and best practices for these alternative use cases. Wait, and give diverse examples."

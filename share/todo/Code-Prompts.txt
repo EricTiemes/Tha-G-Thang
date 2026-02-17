@@ -1,0 +1,6 @@
+  * "Write Python code to handle complex JSON structures, including nested objects, arrays, and mixed data types. Provide examples of how to extract, transform, and validate data within these structures. Wait, and give data processing techniques."
+    
+    * "Explore how Python can be used to automate system administration tasks, such as file management, process control, and network configuration. Provide code examples and best practices for these tasks. Wait, and give automation scripts."
+4.  **Python & JSON Error Handling & Debugging:**
+
+    * "Develop prompts that help an AI agent identify and correct errors in Python code or JSON data. The agent should be able to analyze error messages, suggest solutions, and provide debugging strategies. Wait, and include debugging tools."

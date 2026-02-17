@@ -1,0 +1,361 @@
+# Kodi Media Center language file
+# Addon Name: FluidSnoop
+# Addon id: plugin.program.fluidsnoop
+# Addon Provider: FluidSnoop Team
+msgid ""
+msgstr ""
+"Project-Id-Version: FluidSnoop 2.0.0\n"
+"Report-Msgid-Bugs-To: fluidsnoop@example.com\n"
+"POT-Creation-Date: 2026-02-10 00:00+0000\n"
+"PO-Revision-Date: 2026-02-10 00:00+0000\n"
+"Last-Translator: FluidSnoop Team\n"
+"Language-Team: English (United Kingdom)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en_GB\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# General Settings (30000-30099)
+msgctxt "#30000"
+msgid "General"
+msgstr ""
+
+msgctxt "#30001"
+msgid "Output Path"
+msgstr ""
+
+msgctxt "#30002"
+msgid "Auto-save Sessions"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Maximum Log Age (days)"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Show Wizard Tips"
+msgstr ""
+
+msgctxt "#30005"
+msgid "Power User Mode"
+msgstr ""
+
+# Output Formats (30100-30199)
+msgctxt "#30100"
+msgid "Default Output Formats"
+msgstr ""
+
+msgctxt "#30101"
+msgid "JSON (Raw Data)"
+msgstr ""
+
+msgctxt "#30102"
+msgid "AI Handoff (Markdown)"
+msgstr ""
+
+msgctxt "#30103"
+msgid "Compact (Summary)"
+msgstr ""
+
+msgctxt "#30104"
+msgid "Detailed (Full Report)"
+msgstr ""
+
+msgctxt "#30105"
+msgid "Auto-open Results"
+msgstr ""
+
+# Module Availability (30200-30299)
+msgctxt "#30200"
+msgid "Available Modules"
+msgstr ""
+
+msgctxt "#30201"
+msgid "Enable UI Intercept"
+msgstr ""
+
+msgctxt "#30202"
+msgid "Enable DB Spy"
+msgstr ""
+
+msgctxt "#30203"
+msgid "Enable Network Monitor"
+msgstr ""
+
+msgctxt "#30204"
+msgid "Enable Runtime Hook"
+msgstr ""
+
+msgctxt "#30205"
+msgid "Enable Filesystem Monitor"
+msgstr ""
+
+msgctxt "#30206"
+msgid "Enable Code Injector"
+msgstr ""
+
+# Research Defaults (30300-30399)
+msgctxt "#30300"
+msgid "Research Defaults"
+msgstr ""
+
+msgctxt "#30301"
+msgid "Default Target Addon"
+msgstr ""
+
+msgctxt "#30302"
+msgid "Auto-select Modules"
+msgstr ""
+
+msgctxt "#30303"
+msgid "Confirm Code Injection"
+msgstr ""
+
+# Advanced (30400-30499)
+msgctxt "#30400"
+msgid "Advanced"
+msgstr ""
+
+msgctxt "#30401"
+msgid "Debug Mode"
+msgstr ""
+
+msgctxt "#30402"
+msgid "Max Events Per Session"
+msgstr ""
+
+msgctxt "#30403"
+msgid "Buffer Size"
+msgstr ""
+
+# Main Menu (31000-31099)
+msgctxt "#31000"
+msgid "FluidSnoop"
+msgstr ""
+
+msgctxt "#31001"
+msgid "Start Research Wizard"
+msgstr ""
+
+msgctxt "#31002"
+msgid "Resume Active Session"
+msgstr ""
+
+msgctxt "#31003"
+msgid "Recent Sessions"
+msgstr ""
+
+msgctxt "#31004"
+msgid "Compare Sessions"
+msgstr ""
+
+msgctxt "#31005"
+msgid "View All History"
+msgstr ""
+
+msgctxt "#31006"
+msgid "Settings"
+msgstr ""
+
+# Wizard Steps (31100-31199)
+msgctxt "#31100"
+msgid "Research Wizard"
+msgstr ""
+
+msgctxt "#31101"
+msgid "What do you want to learn?"
+msgstr ""
+
+msgctxt "#31102"
+msgid "Select target addon"
+msgstr ""
+
+msgctxt "#31103"
+msgid "Configure modules"
+msgstr ""
+
+msgctxt "#31104"
+msgid "Select output formats"
+msgstr ""
+
+msgctxt "#31105"
+msgid "Review and confirm"
+msgstr ""
+
+# Research Types (31200-31299)
+msgctxt "#31200"
+msgid "Copy Favorites System"
+msgstr ""
+
+msgctxt "#31201"
+msgid "Debug Download Flow"
+msgstr ""
+
+msgctxt "#31202"
+msgid "Fix Broken Hook"
+msgstr ""
+
+msgctxt "#31203"
+msgid "Extract Menu Structure"
+msgstr ""
+
+msgctxt "#31204"
+msgid "Audit UI Messages"
+msgstr ""
+
+msgctxt "#31205"
+msgid "Study Network Patterns"
+msgstr ""
+
+msgctxt "#31206"
+msgid "Reverse DB Schema"
+msgstr ""
+
+msgctxt "#31207"
+msgid "Compare Addons"
+msgstr ""
+
+msgctxt "#31208"
+msgid "Custom Research"
+msgstr ""
+
+# Module Names (31300-31399)
+msgctxt "#31300"
+msgid "UI Interceptor"
+msgstr ""
+
+msgctxt "#31301"
+msgid "Captures Dialogs, Notifications, Progress"
+msgstr ""
+
+msgctxt "#31302"
+msgid "DB Spy"
+msgstr ""
+
+msgctxt "#31303"
+msgid "Monitors SQLite Operations"
+msgstr ""
+
+msgctxt "#31304"
+msgid "Network Monitor"
+msgstr ""
+
+msgctxt "#31305"
+msgid "Tracks HTTP Requests"
+msgstr ""
+
+msgctxt "#31306"
+msgid "Runtime Hook"
+msgstr ""
+
+msgctxt "#31307"
+msgid "Logs Function Calls"
+msgstr ""
+
+msgctxt "#31308"
+msgid "Filesystem Monitor"
+msgstr ""
+
+msgctxt "#31309"
+msgid "Tracks File Operations"
+msgstr ""
+
+msgctxt "#31310"
+msgid "Code Injector"
+msgstr ""
+
+msgctxt "#31311"
+msgid "Generates Instrumentation Snippets"
+msgstr ""
+
+# Actions (31400-31499)
+msgctxt "#31400"
+msgid "Start Monitoring"
+msgstr ""
+
+msgctxt "#31401"
+msgid "Stop Monitoring"
+msgstr ""
+
+msgctxt "#31402"
+msgid "View Results"
+msgstr ""
+
+msgctxt "#31403"
+msgid "Export"
+msgstr ""
+
+msgctxt "#31404"
+msgid "Delete"
+msgstr ""
+
+msgctxt "#31405"
+msgid "Compare"
+msgstr ""
+
+msgctxt "#31406"
+msgid "Back"
+msgstr ""
+
+msgctxt "#31407"
+msgid "Next"
+msgstr ""
+
+msgctxt "#31408"
+msgid "Cancel"
+msgstr ""
+
+msgctxt "#31409"
+msgid "Finish"
+msgstr ""
+
+# Notifications (31500-31599)
+msgctxt "#31500"
+msgid "Monitoring started"
+msgstr ""
+
+msgctxt "#31501"
+msgid "Monitoring stopped"
+msgstr ""
+
+msgctxt "#31502"
+msgid "Session saved"
+msgstr ""
+
+msgctxt "#31503"
+msgid "Export complete"
+msgstr ""
+
+msgctxt "#31504"
+msgid "No active session"
+msgstr ""
+
+msgctxt "#31505"
+msgid "Select at least one module"
+msgstr ""
+
+# Advisor Messages (31600-31699)
+msgctxt "#31600"
+msgid "Advisor"
+msgstr ""
+
+msgctxt "#31601"
+msgid "Add UI Intercept to capture progress dialogs?"
+msgstr ""
+
+msgctxt "#31602"
+msgid "Addon comparison requires 2 addons"
+msgstr ""
+
+msgctxt "#31603"
+msgid "Code injection requires manual file editing"
+msgstr ""
+
+msgctxt "#31604"
+msgid "Select another addon"
+msgstr ""
+
+msgctxt "#31605"
+msgid "Confirm injection"
+msgstr ""

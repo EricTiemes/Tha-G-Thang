@@ -1,0 +1,16 @@
+plugin.program.fluiddashboard/
+├── addon.xml
+├── icon.png
+├── fanart.jpg
+├── default.py
+├── resources/
+│   ├── lib/
+│   │   ├── dashboard.py
+│   │   └── __init__.py
+│   └── settings.xml
+├── tools/
+│   ├── lint_scanner.py
+│   ├── ruff_runner.py
+│   ├── tree_generator.py
+│   └── lint_all.py
+└── CHANGELOG.txt

@@ -1,0 +1,428 @@
+("template_custom_pattern.json", {
+        "id": "custom_pattern",
+        "name": "Custom Pattern Search",
+        "description": "Define your own pattern search with custom parameters",
+        "version": "1.0",
+        "module": "pattern_extractor",
+        "user_fields": [
+            {
+                "id": "pattern_type",
+                "label": "Pattern Type",
+                "type": "select",
+                "options": ["name", "api_usage", "decorator", "import"],
+                "default": "name",
+                "description": "What type of pattern to search for"
+            },
+            {
+                "id": "search_pattern",
+                "label": "Search Pattern",
+                "type": "text",
+                "default": "download",
+                "description": "Regex pattern or string to search for"
+            },
+            {
+                "id": "case_sensitive",
+                "label": "Case Sensitive",
+                "type": "bool",
+                "default": False
+            },
+            {
+                "id": "max_results",
+                "label": "Max Results",
+                "type": "number",
+                "default": 20,
+                "min": 1,
+                "max": 100
+            },
+            {
+                "id": "include_code",
+                "label": "Include Full Code",
+                "type": "bool",
+                "default": True
+            }
+        ],
+        "target_files": ["*.py"],
+        "delivery_format": "ai_handoff",
+        "options": {}
+    }),
+    
+    ("template_custom_flow.json", {
+        "id": "custom_flow",
+        "name": "Custom Flow Analysis",
+        "description": "Trace specific execution paths with custom depth",
+        "version": "1.0",
+        "module": "hook_tracer",
+        "user_fields": [
+            {
+                "id": "start_function",
+                "label": "Start Function",
+                "type": "text",
+                "default": "",
+                "description": "Function name to start tracing from"
+            },
+            {
+                "id": "trace_depth",
+                "label": "Trace Depth",
+                "type": "number",
+                "default": 5,
+                "min": 1,
+                "max": 20
+            },
+            {
+                "id": "find_hooks",
+                "label": "Find Framework Hooks",
+                "type": "bool",
+                "default": True
+            },
+            {
+                "id": "find_dead_code",
+                "label": "Find Unused Functions",
+                "type": "bool",
+                "default": False
+            },
+            {
+                "id": "framework",
+                "label": "Target Framework",
+                "type": "select",
+                "options": ["any", "xbmc", "simpleplugin", "routing", "codequick"],
+                "default": "any"
+            }
+        ],
+        "target_files": ["*.py"],
+        "delivery_format": "detailed_report",
+        "options": {}
+    }),
+    
+    ("template_custom_clean.json", {
+        "id": "custom_clean",
+        "name": "Custom Code Cleaning",
+        "description": "Selective code cleaning with user-defined rules",
+        "version": "1.0",
+        "module": "code_cleaner",
+        "user_fields": [
+            {
+                "id": "replace_addon_id",
+                "label": "Replace Addon ID",
+                "type": "bool",
+                "default": True
+            },
+            {
+                "id": "replace_addon_name",
+                "label": "Replace Addon Name",
+                "type": "bool",
+                "default": True
+            },
+            {
+                "id": "clean_hardcoded_paths",
+                "label": "Clean Hardcoded Paths",
+                "type": "bool",
+                "default": True
+            },
+            {
+                "id": "generalize_variables",
+                "label": "Generalize Variable Names",
+                "type": "bool",
+                "default": False
+            },
+            {
+                "id": "remove_comments",
+                "label": "Remove Addon-Specific Comments",
+                "type": "bool",
+                "default": True
+            },
+            {
+                "id": "custom_replacements",
+                "label": "Custom Replacements",
+                "type": "text",
+                "default": "",
+                "description": "Format: old1:new1,old2:new2"
+            }
+        ],
+        "target_files": ["*.py"],
+        "delivery_format": "code_bundle",
+        "options": {}
+    }),
+    
+    # FRAMEWORK-SPECIFIC (3)
+    ("template_framework_codequick.json", {
+        "id": "framework_codequick",
+        "name": "CodeQuick Framework Analysis",
+        "description": "Deep analysis of CodeQuick-based addons",
+        "version": "1.0",
+        "module": "pattern_extractor",
+        "target_files": ["*.py"],
+        "filters": {
+            "framework": "codequick",
+            "patterns": {
+                "decorators": ["@route", "@listitem", "@resolver"],
+                "classes": ["Route", "Listitem", "Resolver"],
+                "imports": ["codequick"]
+            }
+        },
+        "delivery_format": "detailed_report",
+        "options": {
+            "extract_routes": True,
+            "extract_listitems": True,
+            "extract_resolvers": True,
+            "generate_blueprint": True
+        }
+    }),
+    
+    ("template_framework_simpleplugin.json", {
+        "id": "framework_simpleplugin",
+        "name": "SimplePlugin Framework Analysis",
+        "description": "Analyze SimplePlugin addons",
+        "version": "1.0",
+        "module": "pattern_extractor",
+        "target_files": ["*.py"],
+        "filters": {
+            "framework": "simpleplugin",
+            "patterns": {
+                "classes": ["Plugin", "MemStorage", "LoggedStorage"],
+                "methods": ["action", "cached", "mem_cached"],
+                "imports": ["simpleplugin"]
+            }
+        },
+        "delivery_format": "detailed_report",
+        "options": {
+            "extract_actions": True,
+            "extract_caching": True,
+            "generate_blueprint": True
+        }
+    }),
+    
+    ("template_framework_routing.json", {
+        "id": "framework_routing",
+        "name": "Routing Framework Analysis",
+        "description": "Analyze URL routing patterns",
+        "version": "1.0",
+        "module": "hook_tracer",
+        "target_files": ["*.py"],
+        "filters": {
+            "framework": "routing",
+            "patterns": {
+                "decorators": ["@route"],
+                "classes": ["Plugin"],
+                "methods": ["route", "run"]
+            }
+        },
+        "delivery_format": "detailed_report",
+        "options": {
+            "extract_routes": True,
+            "map_url_handlers": True,
+            "generate_routing_table": True
+        }
+    }),
+    
+    # COMPARISON (4)
+    ("template_compare_structure.json", {
+        "id": "compare_structure",
+        "name": "Compare Addon Structures",
+        "description": "Side-by-side comparison of two addons' architectures",
+        "version": "1.0",
+        "module": "structure_analyzer",
+        "requires": ["addon1", "addon2"],
+        "comparison_points": [
+            "module_count",
+            "framework_usage",
+            "entry_points",
+            "lib_folder_structure",
+            "modularity_score"
+        ],
+        "delivery_format": "comparison_report",
+        "options": {
+            "highlight_differences": True,
+            "similarity_score": True,
+            "recommendations": True
+        }
+    }),
+    
+    ("template_compare_routing.json", {
+        "id": "compare_routing",
+        "name": "Compare Routing Patterns",
+        "description": "Compare URL routing between addons",
+        "version": "1.0",
+        "module": "hook_tracer",
+        "requires": ["addon1", "addon2"],
+        "comparison_points": [
+            "route_definitions",
+            "handler_functions",
+            "parameter_patterns",
+            "framework_choice"
+        ],
+        "delivery_format": "comparison_report",
+        "options": {
+            "route_table_diff": True,
+            "common_patterns": True,
+            "best_practices": True
+        }
+    }),
+    
+    ("template_compare_deps.json", {
+        "id": "compare_deps",
+        "name": "Compare Dependencies",
+        "description": "Compare addon.xml and Python dependencies",
+        "version": "1.0",
+        "module": "dependency_mapper",
+        "requires": ["addon1", "addon2"],
+        "comparison_points": [
+            "xml_dependencies",
+            "python_imports",
+            "third_party_modules",
+            "version_conflicts"
+        ],
+        "delivery_format": "comparison_report",
+        "options": {
+            "common_deps": True,
+            "conflict_warning": True,
+            "optimization_suggestions": True
+        }
+    }),
+    
+    ("template_compare_patterns.json", {
+        "id": "compare_patterns",
+        "name": "Compare Code Patterns",
+        "description": "Find similar and different code patterns",
+        "version": "1.0",
+        "module": "pattern_extractor",
+        "requires": ["addon1", "addon2"],
+        "comparison_points": [
+            "function_patterns",
+            "class_structures",
+            "api_usage",
+            "naming_conventions"
+        ],
+        "delivery_format": "comparison_report",
+        "options": {
+            "similarity_threshold": 0.8,
+            "highlight_unique": True,
+            "pattern_merging": True
+        }
+    }),
+    
+    # USE-CASE (4)
+    ("template_usecase_download_flow.json", {
+        "id": "usecase_download_flow",
+        "name": "Extract Download Flow",
+        "description": "Find download/resolver patterns (like SuperFavourites)",
+        "version": "1.0",
+        "module": "pattern_extractor",
+        "target_files": ["*.py"],
+        "filters": {
+            "patterns": {
+                "name": ["download.*", "resolve.*", "get_url.*", "fetch.*"],
+                "api": ["requests.get", "urllib.request", "xbmc.Player"],
+                "decorator": ["resolver", "download"]
+            }
+        },
+        "delivery_format": "reusable_module",
+        "options": {
+            "extract_related_functions": True,
+            "include_error_handling": True,
+            "clean_for_reuse": True,
+            "generate_starter": True
+        }
+    }),
+    
+    ("template_usecase_ui_dialogs.json", {
+        "id": "usecase_ui_dialogs",
+        "name": "Extract UI Dialog Patterns",
+        "description": "Find xbmcgui.Dialog usage patterns",
+        "version": "1.0",
+        "module": "pattern_extractor",
+        "target_files": ["*.py"],
+        "filters": {
+            "patterns": {
+                "api": ["xbmcgui.Dialog", "Dialog().ok", "Dialog().yesno", "DialogProgress"],
+                "name": ["show_.*", "dialog_.*", "confirm_.*"]
+            }
+        },
+        "delivery_format": "reusable_module",
+        "options": {
+            "categorize_by_type": True,
+            "extract_message_patterns": True
+        }
+    }),
+    
+    ("template_usecase_caching.json", {
+        "id": "usecase_caching",
+        "name": "Extract Caching Patterns",
+        "description": "Find caching implementations",
+        "version": "1.0",
+        "module": "pattern_extractor",
+        "target_files": ["*.py"],
+        "filters": {
+            "patterns": {
+                "name": ["cache.*", "get_cached.*", "store.*"],
+                "decorator": ["cached", "mem_cached", "cache"],
+                "api": ["pickle", "json.dump", "xbmcvfs"]
+            }
+        },
+        "delivery_format": "reusable_module",
+        "options": {
+            "identify_cache_type": True,
+            "extract_ttl_logic": True
+        }
+    }),
+    
+    ("template_usecase_settings.json", {
+        "id": "usecase_settings",
+        "name": "Extract Settings Handler",
+        "description": "Find settings reading/writing patterns",
+        "version": "1.0",
+        "module": "pattern_extractor",
+        "target_files": ["*.py"],
+        "filters": {
+            "patterns": {
+                "api": ["xbmcaddon.Addon", "getSetting", "setSetting", "openSettings"],
+                "name": ["get_setting.*", "save_setting.*", "load_settings.*"]
+            }
+        },
+        "delivery_format": "reusable_module",
+        "options": {
+            "extract_default_values": True,
+            "type_conversion": True
+        }
+    }),
+    
+    # WIZARD (1)
+    ("delivery_wizard.json", {
+        "wizard_id": "delivery_wizard",
+        "name": "Delivery & Export Wizard",
+        "description": "Interactive wizard for choosing output format and destination",
+        "version": "1.0",
+        "steps": [
+            {
+                "step": 1,
+                "title": "What do you want to do?",
+                "options": [
+                    {"id": "quick_insight", "label": "Quick Insight", "format": "ai_handoff"},
+                    {"id": "deep_analysis", "label": "Deep Analysis", "format": "detailed_report"},
+                    {"id": "reuse_code", "label": "Reuse Code", "format": "code_bundle"},
+                    {"id": "compare_learn", "label": "Compare", "format": "comparison_report"},
+                    {"id": "ai_assist", "label": "AI Assistant", "format": "llm_prompt"}
+                ]
+            },
+            {
+                "step": 2,
+                "title": "Output Format",
+                "options": [
+                    "ai_handoff", "detailed_report", "code_bundle", 
+                    "blueprint", "llm_prompt", "comparison_report"
+                ]
+            },
+            {
+                "step": 3,
+                "title": "Destination",
+                "options": [
+                    "kodi_display", "addon_data", "acode_export", "custom_path"
+                ]
+            }
+        ],
+        "presets": [
+            {"name": "Quick Look", "goal": "quick_insight", "format": "ai_handoff", "dest": "kodi_display"},
+            {"name": "Save for Later", "goal": "deep_analysis", "format": "detailed_report", "dest": "addon_data"},
+            {"name": "Reuse in Acode", "goal": "reuse_code", "format": "code_bundle", "dest": "acode_export"},
+            {"name": "Ask AI", "goal": "ai_assist", "format": "llm_prompt", "dest": "acode_export"}
+        ]
+    })
